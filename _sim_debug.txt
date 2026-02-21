@@ -1,0 +1,6 @@
+step 1: starting
+IMPORT ERROR: cannot import name 'load_data' from 'sim_trading.simulate_streaming_clean' (C:\Users\Administrator\ibkr8\sim_trading\simulate_streaming_clean.py)
+Traceback (most recent call last):
+  File "<string>", line 9, in <module>
+    from sim_trading.simulate_streaming_clean import load_data, create_strategy, main
+ImportError: cannot import name 'load_data' from 'sim_trading.simulate_streaming_clean' (C:\Users\Administrator\ibkr8\sim_trading\simulate_streaming_clean.py)

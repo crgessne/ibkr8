@@ -1,0 +1,16 @@
+No borrowing: $0.0000
+$500K for 1hr: $3.72
+$1.5M for 2hr: $21.81
+$1.4M for 30min: $5.10
+Negative (no margin): $0.0000
+
+Margin rate tiers:
+  <= $        100,000: 6.83%
+  <= $      1,000,000: 6.33%
+  <= $     50,000,000: 6.08%
+  <= $    200,000,000: 5.83%
+  > $200,000,000: 5.58%
+
+Manual calc $1.4M for 30min: $5.10
+Function result:             $5.10
+PASS - all tests OK

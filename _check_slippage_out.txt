@@ -1,0 +1,120 @@
+shape: (2515, 19)
+cols: ['entry_bar_index', 'exit_bar_index', 'entry_datetime', 'exit_datetime', 'is_long', 'entry_price', 'exit_price', 'exit_reason', 'gross_pnl', 'net_pnl', 'costs', 'margin_cost', 'margin_borrowed', 'notional', 'hold_hours', 'shares', 'risk_dollars', 'vwap_dist_atr', 'per_trade_rr']
+
+=== STOP DISTANCE (0.75 x ATR, $/share) ===
+count    2515.0000
+mean        0.8788
+std         0.6376
+min         0.1784
+25%         0.4669
+50%         0.7104
+75%         1.0396
+max         6.4227
+Name: stop_dist, dtype: float64
+
+=== TARGET DISTANCE (vwap_dist x ATR, $/share) ===
+count    2515.0000
+mean        1.0971
+std         1.3469
+min         0.0003
+25%         0.2914
+50%         0.6613
+75%         1.3785
+max        13.7045
+Name: target_dist, dtype: float64
+
+=== REWARD : RISK  (= target_dist / stop_dist) ===
+count    2515.0000
+mean        1.3321
+std         1.2758
+min         0.0003
+25%         0.4223
+50%         0.9367
+75%         1.8088
+max         7.9320
+Name: rr, dtype: float64
+
+=== TARGET DIST PERCENTILES ===
+  p 1: $0.0099
+  p 5: $0.0581
+  p10: $0.1163
+  p25: $0.2914
+  p50: $0.6613
+  p75: $1.3785
+  p90: $2.5347
+  p95: $3.6215
+  p99: $6.5540
+
+=== % TRADES BELOW TARGET-DISTANCE THRESHOLDS ===
+  target < $0.05:  107 / 2515 (4.3%)
+  target < $0.10:  210 / 2515 (8.3%)
+  target < $0.20:  433 / 2515 (17.2%)
+  target < $0.30:  647 / 2515 (25.7%)
+  target < $0.50: 1035 / 2515 (41.2%)
+  target < $1.00: 1617 / 2515 (64.3%)
+
+=== SLIPPAGE IMPACT ===
+  Backtest model: $0.01/share one-way  ->  $0.02 round-trip
+  Live MKT obs:  $0.18/share one-way  ->  $0.36 round-trip
+  Extra cost per share:  $0.34 round-trip
+  Avg position size:     4544 shares
+  Extra cost per trade:  $1,545
+  -> Need target_dist > $0.36 to cover live slippage
+
+=== WIN RATE & NET P&L BY TARGET DISTANCE BUCKET ===
+            count  win_pct  avg_rr  total_pnl  avg_pnl
+tgt_bucket                                            
+<0.05         107     73.8    0.04  -88618.38  -828.21
+0.05-0.10     103     81.6    0.14  -37574.21  -364.80
+0.10-0.20     223     69.5    0.30 -128219.10  -574.97
+0.20-0.50     602     60.3    0.63 -159684.43  -265.26
+0.50-1.00     582     49.3    1.21   -3864.17    -6.64
+1.00-2.00     532     42.3    1.92  277100.65   520.87
+>2.00         366     35.0    3.17  928852.68  2537.85
+
+=== WIN RATE & NET P&L BY R:R BUCKET ===
+           count  win_pct  avg_tgt  total_pnl  avg_pnl
+rr_bucket                                             
+<0.25        346     74.9     0.12 -243464.84  -703.66
+0.25-0.50    388     70.9     0.34  -67110.19  -172.96
+0.50-0.75    320     55.6     0.56 -138683.41  -433.39
+0.75-1.00    270     54.8     0.76  -19247.09   -71.29
+1.00-1.50    377     49.1     1.07  142422.66   377.78
+1.50-2.00    273     39.6     1.46  125054.44   458.07
+>2.00        541     31.1     2.58  989021.47  1828.14
+
+=== CUMULATIVE P&L: FILTER BY MIN TARGET DISTANCE ===
+   min_tgt   trades   kept%       total_pnl     avg_pnl     wr%
+  $  0.00      2515  100.0%  $      787,993  $      313   52.5%
+  $  0.10      2305   91.7%  $      914,186  $      397   50.2%
+  $  0.20      2082   82.8%  $    1,042,405  $      501   48.2%
+  $  0.30      1868   74.3%  $    1,134,057  $      607   46.6%
+  $  0.40      1656   65.8%  $    1,186,559  $      717   44.8%
+  $  0.50      1480   58.8%  $    1,202,089  $      812   43.2%
+  $  0.75      1137   45.2%  $    1,239,046  $    1,090   40.8%
+  $  1.00       898   35.7%  $    1,205,953  $    1,343   39.3%
+
+=== CUMULATIVE P&L: FILTER BY MIN R:R ===
+    min_rr   trades   kept%       total_pnl     avg_pnl     wr%
+      0.00     2515  100.0%  $      787,993  $      313   52.5%
+      0.25     2169   86.2%  $    1,031,458  $      476   49.0%
+      0.50     1781   70.8%  $    1,098,568  $      617   44.2%
+      0.75     1461   58.1%  $    1,237,251  $      847   41.7%
+      1.00     1191   47.4%  $    1,256,499  $    1,055   38.7%
+      1.25      958   38.1%  $    1,125,539  $    1,175   35.0%
+      1.50      814   32.4%  $    1,114,076  $    1,369   33.9%
+      2.00      541   21.5%  $      989,021  $    1,828   31.1%
+
+=== TOTAL SUMMARY ===
+  Total trades:       2515
+  Total net P&L:      $      787,993
+  Win rate (vwap):    52.5%
+  Stop rate:          45.2%
+  EOD flatten rate:   2.3%
+  Avg target dist:    $1.0971
+  Median target dist: $0.6613
+  Avg stop dist:      $0.8788
+  Median stop dist:   $0.7104
+  Avg ATR est:        $1.1717
+  Avg vwap_dist_atr:  0.9991
+  Avg realized R:R:   1.3321

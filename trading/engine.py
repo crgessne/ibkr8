@@ -33,6 +33,7 @@ from trading.config import (
     IB_BAR_SIZES,
     LIVE_PORT,
     MAX_CONCURRENT,
+    MIN_REWARD_RISK,
     PAPER_PORT,
     PROB_SCALE_MIN,
     PROB_THRESHOLD,
@@ -106,6 +107,7 @@ class TradingEngine:
         host: str = DEFAULT_HOST,
         client_id: int = DEFAULT_CLIENT_ID,
         lookback: int = 200,
+        min_rr: float = MIN_REWARD_RISK,
     ):
         self.mode = mode
         self.symbol = symbol
@@ -120,6 +122,7 @@ class TradingEngine:
         self.port = PAPER_PORT if mode == "paper" else LIVE_PORT
         self.client_id = client_id
         self.lookback = lookback
+        self.min_rr = min_rr
 
         self.model = model
         self.features = features or []
@@ -203,6 +206,7 @@ class TradingEngine:
             risk_pct=self.risk_pct,
             prob_scale_min=self.prob_scale_min,
             capital=self.capital,
+            min_rr=self.min_rr,
         )
 
         self.order_mgr = OrderManager(
@@ -321,9 +325,9 @@ class TradingEngine:
             "datetime": ts,
             "open": float(b.open_),
             "high": float(b.high),
-            "low": float(b.low),
-            "close": float(b.close),
-            "volume": int(b.volume),        }
+            "low": float(b.low),            "close": float(b.close),
+            "volume": int(b.volume),
+        }
         self._process_bar(bar_dict)
 
     def _on_historical_bar_update(self, bars, hasNewBar: bool) -> None:
@@ -414,10 +418,10 @@ class TradingEngine:
             return
 
         _bar_log.info("%s | >>> TRADE <<< | %s %d shares @ $%.2f  "
-                      "prob=%.4f  stop=$%.2f  target=$%.2f",
-                      hdr, signal.direction.upper(), signal.shares,
+                      "prob=%.4f  stop=$%.2f  target=$%.2f",                      hdr, signal.direction.upper(), signal.shares,
                       signal.entry_price, signal.prob,
-                      signal.stop_price, signal.target_price)        # Cancel any stale pending-entry tickets before submitting a new one.
+                      signal.stop_price, signal.target_price)
+        # Cancel any stalepending-entry tickets before submitting a new one.
         # This prevents the race condition (bar 5) where the new bar's bracket
         # orders get voided because the previous bar's cancel sweeps them too.
         self._cancel_stale_pending_entries()
@@ -648,6 +652,8 @@ class TradingEngine:
         print(f"  Risk/trade:     {self.risk_pct:.1%}  "
               f"(${risk_dollars:,.0f})", flush=True)
         print(f"  Stop ATR:       {self.stop_atr}", flush=True)
+        print(f"  Min R:R:        {self.min_rr:.2f}  "
+              f"(need |entry-VWAP| ≥ {self.min_rr * self.stop_atr:.2f} ATR)", flush=True)
         print(f"  Threshold:      {self.threshold}", flush=True)
         print(f"  Max concurrent: {self.max_concurrent}", flush=True)
         print(f"  Features:       {len(self.features)}", flush=True)

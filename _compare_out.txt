@@ -1,0 +1,99 @@
+================================================================================
+PIPELINE vs STREAMING SIMULATION COMPARISON
+================================================================================
+
+[1] Loading data...
+    Total bars: 197,419
+
+[2] Calculating indicators (vectorized, full dataset)...
+    Indicators computed. Columns: 144
+
+[3] Generating labels for stop={STOP_ATR}...
+    Valid labels: 194,858
+
+[4] Applying setup filter (matches training)...
+    Setup bars (all years): 28,824
+    Setup bars (test 2023): 2,877
+
+[5] Loading model and scoring...
+Loaded model from: models\rf_vwap_stop0.75_20260216_114723.pkl
+  - Model type: PnLModelWrapper
+  - Saved at: 2026-02-16T11:50:44.773630
+  - Stop ATR: 0.75
+  - Features: 62
+    Features: 62
+    Bars with P(win) >= 0.5: 1,189 / 2,877
+
+[6] Simulating flat-to-flat trades (pipeline logic)...
+    Pipeline trades: 446
+    Pipeline net P&L: $+1,459,470
+    Pipeline win rate: 52.5%
+    Pipeline avg shares: 7181
+    Saved: data\pipeline_trades_stop0.75_2023.csv
+
+====================================================================================================
+FIRST 30 PIPELINE TRADES
+====================================================================================================
+  #  1: 2023-01-04 14:55:00+00:00  LONG    5764 sh  @ $109.64 -> $108.74 (stop)  Net=$   -5,357  Cum=$    -5,357  vwap_dist=0.78
+  #  2: 2023-01-04 15:05:00+00:00  LONG    8342 sh  @ $108.80 -> $110.25 (vwap)  Net=$  +11,870  Cum=$    +6,513  vwap_dist=1.11
+  #  3: 2023-01-06 14:35:00+00:00  LONG    9999 sh  @ $102.06 -> $103.25 (vwap)  Net=$  +11,635  Cum=$   +18,148  vwap_dist=1.06
+  #  4: 2023-01-09 15:30:00+00:00  SHORT   4927 sh  @ $122.82 -> $120.60 (vwap)  Net=$  +10,781  Cum=$   +28,929  vwap_dist=1.21
+  #  5: 2023-01-10 15:30:00+00:00  LONG    5465 sh  @ $116.36 -> $115.25 (stop)  Net=$   -6,248  Cum=$   +22,682  vwap_dist=1.89
+  #  6: 2023-01-11 15:00:00+00:00  SHORT   8306 sh  @ $122.73 -> $123.53 (stop)  Net=$   -6,906  Cum=$   +15,776  vwap_dist=0.98
+  #  7: 2023-01-11 15:10:00+00:00  SHORT   9679 sh  @ $123.90 -> $124.75 (stop)  Net=$   -8,473  Cum=$    +7,303  vwap_dist=1.63
+  #  8: 2023-01-11 15:20:00+00:00  SHORT   9999 sh  @ $125.42 -> $122.70 (vwap)  Net=$  +26,864  Cum=$   +34,167  vwap_dist=2.21
+  #  9: 2023-01-12 14:40:00+00:00  LONG    6503 sh  @ $117.70 -> $117.09 (stop)  Net=$   -4,170  Cum=$   +29,997  vwap_dist=2.77
+  # 10: 2023-01-12 14:55:00+00:00  LONG    9999 sh  @ $118.12 -> $119.01 (vwap)  Net=$   +8,645  Cum=$   +38,642  vwap_dist=0.86
+  # 11: 2023-01-13 14:40:00+00:00  LONG    6431 sh  @ $116.22 -> $117.13 (vwap)  Net=$   +5,677  Cum=$   +44,319  vwap_dist=0.78
+  # 12: 2023-01-19 14:35:00+00:00  SHORT   9999 sh  @ $129.18 -> $128.21 (vwap)  Net=$   +9,421  Cum=$   +53,741  vwap_dist=1.47
+  # 13: 2023-01-19 14:55:00+00:00  SHORT   9999 sh  @ $129.17 -> $129.87 (stop)  Net=$   -7,334  Cum=$   +46,407  vwap_dist=0.93
+  # 14: 2023-01-20 15:30:00+00:00  SHORT   4074 sh  @ $131.08 -> $129.85 (vwap)  Net=$   +4,894  Cum=$   +51,301  vwap_dist=1.17
+  # 15: 2023-01-24 14:45:00+00:00  SHORT   9999 sh  @ $145.75 -> $143.93 (vwap)  Net=$  +17,915  Cum=$   +69,216  vwap_dist=1.64
+  # 16: 2023-01-24 15:05:00+00:00  LONG    4802 sh  @ $141.86 -> $143.90 (vwap)  Net=$   +9,659  Cum=$   +78,875  vwap_dist=1.42
+  # 17: 2023-01-25 14:45:00+00:00  LONG    9999 sh  @ $140.60 -> $139.89 (stop)  Net=$   -7,398  Cum=$   +71,477  vwap_dist=0.90
+  # 18: 2023-01-25 14:55:00+00:00  LONG    9999 sh  @ $138.93 -> $138.08 (stop)  Net=$   -8,829  Cum=$   +62,648  vwap_dist=1.43
+  # 19: 2023-01-26 14:55:00+00:00  LONG    1690 sh  @ $155.74 -> $158.22 (vwap)  Net=$   +4,133  Cum=$   +66,782  vwap_dist=0.96
+  # 20: 2023-01-30 14:35:00+00:00  LONG    4282 sh  @ $174.34 -> $175.70 (vwap)  Net=$   +5,715  Cum=$   +72,497  vwap_dist=0.94
+  # 21: 2023-01-30 15:20:00+00:00  LONG    3178 sh  @ $173.62 -> $172.06 (stop)  Net=$   -5,062  Cum=$   +67,436  vwap_dist=1.14
+  # 22: 2023-01-30 15:30:00+00:00  LONG    3494 sh  @ $172.75 -> $171.09 (stop)  Net=$   -5,900  Cum=$   +61,536  vwap_dist=1.29
+  # 23: 2023-02-01 14:50:00+00:00  SHORT   6630 sh  @ $175.30 -> $172.71 (vwap)  Net=$  +17,000  Cum=$   +78,535  vwap_dist=1.98
+  # 24: 2023-02-03 14:40:00+00:00  SHORT   2680 sh  @ $193.50 -> $195.03 (stop)  Net=$   -4,169  Cum=$   +74,366  vwap_dist=1.45
+  # 25: 2023-02-03 14:50:00+00:00  SHORT   4739 sh  @ $195.28 -> $196.84 (stop)  Net=$   -7,545  Cum=$   +66,821  vwap_dist=1.64
+  # 26: 2023-02-03 15:15:00+00:00  SHORT   4348 sh  @ $197.97 -> $193.37 (vwap)  Net=$  +19,879  Cum=$   +86,700  vwap_dist=1.74
+  # 27: 2023-02-06 15:20:00+00:00  LONG    2330 sh  @ $192.01 -> $190.16 (stop)  Net=$   -4,374  Cum=$   +82,327  vwap_dist=1.18
+  # 28: 2023-02-07 15:05:00+00:00  LONG    6370 sh  @ $192.16 -> $191.11 (stop)  Net=$   -6,900  Cum=$   +75,426  vwap_dist=1.63
+  # 29: 2023-02-07 15:25:00+00:00  LONG    5844 sh  @ $192.38 -> $193.91 (vwap)  Net=$   +8,756  Cum=$   +84,182  vwap_dist=0.96
+  # 30: 2023-02-08 15:10:00+00:00  SHORT   2335 sh  @ $201.24 -> $202.60 (stop)  Net=$   -3,236  Cum=$   +80,946  vwap_dist=0.92
+
+  [INFO] No simulation output found at data\sim_nn_pnl_2023_stop0.75_risk0.01.csv
+  Run the simulation first with:
+    python sim_trading/simulate_nn_pnl.py --year 2023 --stop-atr 0.75 --risk-pct 0.01 --min-rr 1.0 --model-file models/rf_vwap_stop0.75_20260216_114723.pkl
+
+====================================================================================================
+FILTER FUNNEL (test year 2023)
+====================================================================================================
+  Total bars:                   19,428
+  Valid labels:                 19,178  (98.7%)
+  vwap_width >= 0.5:          16,038  (82.6%)
+  vwap_width/stop >= 1.0:       14,337  (73.8%)
+  minutes [15..360]:            5,230  (26.9%)
+  ALL filters combined:          2,877  (14.8%)
+  (Pipeline reported n_test:     2,877)
+  Filters WITHOUT label check:   2,877  (14.8%)
+  (This is what streaming sim sees)
+  Bars with NaN features:            0
+  P(win) >= 0.5 (no label):     1,189
+  P(win) >= 0.5 (w/ label):     1,189  (pipeline's signal count)
+
+  Probability distribution (all filtered bars, no label req):
+    [0.00, 0.30): 1,346
+    [0.30, 0.40):   194
+    [0.40, 0.45):    80
+    [0.45, 0.50):    68
+    [0.50, 0.55):    66
+    [0.55, 0.60):    54
+    [0.60, 0.70):   125
+    [0.70, 0.80):   183
+    [0.80, 1.01):   761
+
+Done.

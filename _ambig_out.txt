@@ -1,0 +1,34 @@
+Loading...
+
+================================================================================
+LOADING DATA
+================================================================================
+[OK] Loaded 197,419 bars
+[OK] Date range: 2015-12-29 14:30:00+00:00 to 2026-02-06 15:05:00+00:00
+[OK] Data span: 3692 days
+[OK] Dataset exceeds 100K bars requirement
+
+===============================================================================================
+  AMBIGUOUS BAR ANALYSIS: Setup-Filtered Test Bars (>= 2024)
+  Q: How often does the DECIDING bar hit BOTH stop AND target?
+===============================================================================================
+
+   Stop  SetupBars  Resolved  BothHit  BothPct   CurWR   AdjWR     Boost    EOD
+  -----  ---------  --------  -------  -------  ------  ------  --------  -----
+   0.25      7,443     7,443      341    4.58%   16.3%   20.8%  +4.58pp  0.2%
+   0.35      7,443     7,443      258    3.47%   20.9%   24.4%  +3.47pp  0.3%
+   0.50      7,443     7,443      182    2.45%   27.3%   29.8%  +2.45pp  0.6%
+   0.60      6,785     6,785      108    1.59%   29.6%   31.2%  +1.59pp  0.8%
+   0.75      5,886     5,886       54    0.92%   31.9%   32.8%  +0.92pp  1.4%
+   1.00      4,455     4,455       13    0.29%   34.2%   34.5%  +0.29pp  2.9%
+   1.25      3,281     3,281        1    0.03%   34.2%   34.2%  +0.03pp  6.3%
+   1.50      2,362     2,362        0    0.00%   33.4%   33.4%  +0.00pp  11.4%
+
+Legend:
+  BothHit  = deciding bar touches BOTH stop and VWAP target
+  CurWR    = current win rate (ambiguous bars counted as losses)
+  AdjWR    = adjusted win rate (if ALL ambiguous bars were wins instead)
+  Boost    = max possible WR increase from resolving ambiguity favorably
+  EOD      = % of trades that expire at end of day (neither stop nor target hit)
+
+Done.

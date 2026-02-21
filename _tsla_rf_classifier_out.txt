@@ -1,0 +1,267 @@
+
+================================================================================
+ MASTER PIPELINE: RF VWAP REVERSION ANALYSIS  [TSLA]
+================================================================================
+  Data file: data\tsla_5min_10years.csv
+  Train: <2024 | Test: 2024+
+  Slippage: $0.010/share | Win def: realized_net_pnl | P&L def: realized_path
+  [SETUP FILTER] min_dist=0.5 ATR | min_mins=15 | max_mins=360 | min_rr_setup=1.0
+
+================================================================================
+LOADING DATA
+================================================================================
+[OK] Loaded 197,419 bars
+[OK] Date range: 2015-12-29 14:30:00+00:00 to 2026-02-06 15:05:00+00:00
+[OK] Data span: 3692 days
+[OK] Dataset exceeds 100K bars requirement
+
+================================================================================
+CALCULATING INDICATORS
+================================================================================
+Calculating ATR...
+Calculating VWAP...
+Calculating VWAP distance metrics...
+Calculating VWAP dynamics...
+Calculating volume metrics...
+Calculating momentum indicators...
+Calculating bar context...
+Calculating enhanced features (time/session/trend)...
+Calculating reversal-specific features...
+Calculating R:R metrics...
+[OK] Calculated 95 features
+
+[OK] Using 34 features:
+   1. vwap_width_atr
+   2. price_to_vwap_atr
+   3. is_long_setup
+   4. vwap_stretch_zscore
+   5. vwap_slope
+   6. vwap_slope_5
+   7. vwap_helping
+   8. rel_vol
+   9. vol_ratio
+  10. vol_at_extension
+  11. rsi
+  12. rsi_slope
+  13. rsi_extreme
+  14. bar_range_atr
+  15. close_position
+  16. crossed_vwap
+  17. bars_from_vwap
+  18. hour
+  19. minute
+  20. minutes_into_session
+  21. session_phase
+  22. vol_pct_complete
+  23. vwap_crosses_today
+  24. day_range_atr
+  25. pct_of_day_range
+  26. vwap_in_day_range
+  27. momentum_3bar_atr
+  28. momentum_6bar_atr
+  29. bar_reverting
+  30. consecutive_same_side
+  31. open_vs_vwap_atr
+  32. prior_bar_toward_vwap
+  33. ema20_slope_atr
+  34. extension_speed
+
+================================================================================
+GENERATING LABELS
+================================================================================
+  Stop 0.25 ATR: 194,858 valid labels (15.79% win rate)
+  Stop 0.35 ATR: 194,858 valid labels (20.62% win rate)
+  Stop 0.40 ATR: 194,858 valid labels (22.74% win rate)
+  Stop 0.50 ATR: 194,858 valid labels (26.56% win rate)
+  Stop 0.60 ATR: 194,858 valid labels (29.83% win rate)
+  Stop 0.75 ATR: 194,858 valid labels (33.78% win rate)
+  Stop 1.00 ATR: 194,858 valid labels (38.83% win rate)
+  Stop 1.25 ATR: 194,858 valid labels (42.46% win rate)
+  Stop 1.50 ATR: 194,858 valid labels (45.06% win rate)
+
+================================================================================
+TRAINING RF MODELS & CALCULATING METRICS
+================================================================================
+
+
+--- Stop Width: 0.25 ATR ---
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 29,007 train, 7,443 test samples
+  [PROB] threshold=0.50, trades above=3127, shares=[100..500], avg_shares=152
+  [OK] R:R = 6.05:1, Breakeven WR = 14.2%
+  [prob_0.50] Trades=3,127 WR(touch_vwap)=21.9% NetP&L=$-17,053 (-1.7%)
+    yearly: 2024: $-10,754 (914t, 21%WR) | 2025: $-5,417 (974t, 23%WR) | 2026: $-882 (65t, 23%WR)
+  [STOP SUMMARY] stop_atr=0.25 sel=prob_0.50 n_exec=1,953 total_net_pnl=$-17,053
+
+--- Stop Width: 0.35 ATR ---
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 29,007 train, 7,443 test samples
+  [PROB] threshold=0.50, trades above=3229, shares=[100..500], avg_shares=155
+  [OK] R:R = 4.32:1, Breakeven WR = 18.8%
+  [prob_0.50] Trades=3,229 WR(touch_vwap)=27.8% NetP&L=$-27,732 (-2.8%)
+    yearly: 2024: $-16,828 (901t, 26%WR) | 2025: $-8,763 (950t, 30%WR) | 2026: $-2,141 (64t, 25%WR)
+  [STOP SUMMARY] stop_atr=0.35 sel=prob_0.50 n_exec=1,915 total_net_pnl=$-27,732
+
+--- Stop Width: 0.4 ATR ---
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 29,007 train, 7,443 test samples
+  [PROB] threshold=0.50, trades above=3324, shares=[100..500], avg_shares=155
+  [OK] R:R = 3.78:1, Breakeven WR = 20.9%
+  [prob_0.50] Trades=3,324 WR(touch_vwap)=29.9% NetP&L=$-37,180 (-3.7%)
+    yearly: 2024: $-19,068 (910t, 28%WR) | 2025: $-15,209 (958t, 31%WR) | 2026: $-2,903 (64t, 25%WR)
+  [STOP SUMMARY] stop_atr=0.40 sel=prob_0.50 n_exec=1,932 total_net_pnl=$-37,180
+
+--- Stop Width: 0.5 ATR ---
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 29,007 train, 7,443 test samples
+  [PROB] threshold=0.50, trades above=3504, shares=[100..500], avg_shares=155
+  [OK] R:R = 3.02:1, Breakeven WR = 24.9%
+  [prob_0.50] Trades=3,504 WR(touch_vwap)=35.0% NetP&L=$-39,618 (-4.0%)
+    yearly: 2024: $-19,398 (897t, 34%WR) | 2025: $-16,359 (932t, 36%WR) | 2026: $-3,861 (64t, 28%WR)
+  [STOP SUMMARY] stop_atr=0.50 sel=prob_0.50 n_exec=1,893 total_net_pnl=$-39,618
+
+--- Stop Width: 0.6 ATR ---
+  [SETUP] 194,858 -> 33,287 bars (17.1% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 26,502 train, 6,785 test samples
+  [PROB] threshold=0.50, trades above=3400, shares=[100..500], avg_shares=152
+  [OK] R:R = 2.52:1, Breakeven WR = 28.4%
+  [prob_0.50] Trades=3,400 WR(touch_vwap)=37.5% NetP&L=$-32,151 (-3.2%)
+    yearly: 2024: $-15,122 (838t, 37%WR) | 2025: $-16,566 (856t, 38%WR) | 2026: $-463 (62t, 42%WR)
+  [STOP SUMMARY] stop_atr=0.60 sel=prob_0.50 n_exec=1,756 total_net_pnl=$-32,151
+
+--- Stop Width: 0.75 ATR ---
+  [SETUP] 194,858 -> 28,824 bars (14.8% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 22,938 train, 5,886 test samples
+  [PROB] threshold=0.50, trades above=3155, shares=[100..500], avg_shares=146
+  [OK] R:R = 2.02:1, Breakeven WR = 33.2%
+  [prob_0.50] Trades=3,155 WR(touch_vwap)=39.7% NetP&L=$-28,079 (-2.8%)
+    yearly: 2024: $-7,721 (743t, 39%WR) | 2025: $-16,996 (687t, 40%WR) | 2026: $-3,361 (59t, 37%WR)
+  [STOP SUMMARY] stop_atr=0.75 sel=prob_0.50 n_exec=1,489 total_net_pnl=$-28,079
+
+--- Stop Width: 1.0 ATR ---
+  [SETUP] 194,858 -> 22,006 bars (11.3% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 17,551 train, 4,455 test samples
+  [PROB] threshold=0.50, trades above=2555, shares=[100..500], avg_shares=140
+  [OK] R:R = 1.51:1, Breakeven WR = 39.8%
+  [prob_0.50] Trades=2,555 WR(touch_vwap)=40.6% NetP&L=$-17,245 (-1.7%)
+    yearly: 2024: $+909 (552t, 45%WR) | 2025: $-14,666 (499t, 40%WR) | 2026: $-3,488 (38t, 37%WR)
+  [STOP SUMMARY] stop_atr=1.00 sel=prob_0.50 n_exec=1,089 total_net_pnl=$-17,245
+
+--- Stop Width: 1.25 ATR ---
+  [SETUP] 194,858 -> 16,418 bars (8.4% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 13,137 train, 3,281 test samples
+  [PROB] threshold=0.50, trades above=1937, shares=[100..500], avg_shares=139
+  [OK] R:R = 1.21:1, Breakeven WR = 45.3%
+  [prob_0.50] Trades=1,937 WR(touch_vwap)=38.9% NetP&L=$-18,184 (-1.8%)
+    yearly: 2024: $-5,814 (401t, 44%WR) | 2025: $-9,871 (348t, 42%WR) | 2026: $-2,498 (30t, 37%WR)
+  [STOP SUMMARY] stop_atr=1.25 sel=prob_0.50 n_exec=779 total_net_pnl=$-18,184
+
+--- Stop Width: 1.5 ATR ---
+  [SETUP] 194,858 -> 11,783 bars (6.0% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(classifier): 9,421 train, 2,362 test samples
+  [PROB] threshold=0.50, trades above=1326, shares=[100..500], avg_shares=142
+  [OK] R:R = 1.01:1, Breakeven WR = 49.8%
+  [prob_0.50] Trades=1,326 WR(touch_vwap)=38.3% NetP&L=$-4,972 (-0.5%)
+    yearly: 2024: $-7,718 (298t, 43%WR) | 2025: $+5,861 (253t, 47%WR) | 2026: $-3,115 (18t, 33%WR)
+  [STOP SUMMARY] stop_atr=1.50 sel=prob_0.50 n_exec=569 total_net_pnl=$-4,972
+
+======================================================================
+FEATURE IMPORTANCE RANKINGS (avg across all stops)
+======================================================================
+   1. vwap_width_atr               0.2304  #####################################################################
+   2. price_to_vwap_atr            0.1320  #######################################
+   3. vwap_stretch_zscore          0.0871  ##########################
+   4. vol_pct_complete             0.0605  ##################
+   5. day_range_atr                0.0595  #################
+   6. pct_of_day_range             0.0507  ###############
+   7. open_vs_vwap_atr             0.0347  ##########
+   8. extension_speed              0.0294  ########
+   9. ema20_slope_atr              0.0236  #######
+  10. rsi                          0.0229  ######
+  11. vwap_slope                   0.0227  ######
+  12. bar_range_atr                0.0212  ######
+  13. vwap_in_day_range            0.0210  ######
+  14. vol_at_extension             0.0205  ######
+  15. rel_vol                      0.0202  ######
+  16. momentum_6bar_atr            0.0184  #####
+  17. vwap_slope_5                 0.0182  #####
+  18. bars_from_vwap               0.0170  #####
+  19. consecutive_same_side        0.0167  #####
+  20. momentum_3bar_atr            0.0162  ####
+  21. minutes_into_session         0.0140  ####
+  22. vol_ratio                    0.0126  ###
+  23. rsi_slope                    0.0119  ###
+  24. close_position               0.0111  ###
+  25. vwap_crosses_today           0.0092  ##
+  26. rsi_extreme                  0.0060  #
+  27. minute                       0.0046  #
+  28. hour                         0.0039  #
+  29. session_phase                0.0009  
+  30. is_long_setup                0.0009  
+  31. prior_bar_toward_vwap        0.0008  
+  32. bar_reverting                0.0007  
+  33. crossed_vwap                 0.0004  
+  34. vwap_helping                 0.0000  
+
+==========================================================================================
+RF MODEL VALUE-ADD (base WR vs RF-selected WR)
+==========================================================================================
+   stop   all_tr   sel_tr   lift_tr   n_tr   all_te   sel_te   lift_te   n_te
+  -----  -------  -------  --------  -----  -------  -------  --------  -----
+   0.25    17.3%    24.9%  +   7.6%  12646    16.3%    21.9%  +   5.7%   1953
+   0.35    22.1%    31.1%  +   9.0%  13079    20.9%    27.8%  +   6.9%   1915
+   0.40    24.4%    33.6%  +   9.3%  13412    23.0%    29.9%  +   6.9%   1932
+   0.50    28.2%    38.1%  +   9.8%  14035    27.3%    35.0%  +   7.7%   1893
+   0.60    30.3%    39.6%  +   9.3%  13362    29.6%    37.5%  +   7.9%   1756
+   0.75    32.6%    41.8%  +   9.2%  12300    31.9%    39.7%  +   7.8%   1489
+   1.00    35.2%    44.5%  +   9.3%  10268    34.2%    40.6%  +   6.4%   1089
+   1.25    36.0%    45.8%  +   9.9%   7843    34.2%    38.9%  +   4.7%    779
+   1.50    35.6%    47.5%  +  11.9%   5361    33.4%    38.3%  +   4.9%    569
+
+[OK] Wrote results: data\master_pipeline_results_20260214_095238.csv
+[OK] Wrote summary: data\master_pipeline_summary_TSLA_20260214_095238.md
+Saved model to: models\rf_vwap_stop0.25_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 0.25
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop0.25_20260214_095238.json
+Saved model to: models\rf_vwap_stop0.35_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 0.35
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop0.35_20260214_095238.json
+Saved model to: models\rf_vwap_stop0.4_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 0.4
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop0.4_20260214_095238.json
+Saved model to: models\rf_vwap_stop0.5_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 0.5
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop0.5_20260214_095238.json
+Saved model to: models\rf_vwap_stop0.6_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 0.6
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop0.6_20260214_095238.json
+Saved model to: models\rf_vwap_stop0.75_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 0.75
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop0.75_20260214_095238.json
+Saved model to: models\rf_vwap_stop1.0_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 1.0
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop1.0_20260214_095238.json
+Saved model to: models\rf_vwap_stop1.25_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 1.25
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop1.25_20260214_095238.json
+Saved model to: models\rf_vwap_stop1.5_20260214_095238.pkl
+  - Model type: RandomForestClassifier
+  - Stop ATR: 1.5
+  - Features: 34
+Saved metadata to: models\rf_vwap_stop1.5_20260214_095238.json

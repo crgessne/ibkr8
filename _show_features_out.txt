@@ -1,0 +1,79 @@
+N features: 62
+
+Features:
+    1. vwap_width_atr
+    2. price_to_vwap_atr
+    3. is_long_setup
+    4. vwap_stretch_zscore
+    5. vwap_slope
+    6. vwap_slope_5
+    7. vwap_helping
+    8. rel_vol
+    9. vol_ratio
+   10. vol_at_extension
+   11. rsi
+   12. rsi_slope
+   13. rsi_extreme
+   14. bar_range_atr
+   15. close_position
+   16. crossed_vwap
+   17. bars_from_vwap
+   18. hour
+   19. minute
+   20. minutes_into_session
+   21. session_phase
+   22. vol_pct_complete
+   23. vwap_crosses_today
+   24. day_range_atr
+   25. pct_of_day_range
+   26. vwap_in_day_range
+   27. momentum_3bar_atr
+   28. momentum_6bar_atr
+   29. bar_reverting
+   30. consecutive_same_side
+   31. open_vs_vwap_atr
+   32. prior_bar_toward_vwap
+   33. ema20_slope_atr
+   34. extension_speed
+   35. beyond_vwap_1sigma
+   36. beyond_vwap_2sigma
+   37. dist_to_nearest_vwap_band
+   38. dist_prior_high_atr
+   39. dist_prior_low_atr
+   40. dist_prior_close_atr
+   41. dist_prior_vwap_atr
+   42. dist_open_atr
+   43. swept_key_level
+   44. dist_or_high_atr
+   45. dist_or_low_atr
+   46. outside_or
+   47. dist_day_high_atr
+   48. dist_day_low_atr
+   49. at_session_extreme
+   50. dist_swing_high_atr
+   51. dist_swing_low_atr
+   52. nearest_swing_atr
+   53. dist_poc_atr
+   54. dist_vah_atr
+   55. dist_val_atr
+   56. outside_value_area
+   57. nearest_sr_atr
+   58. sr_levels_between
+   59. sr_location_score
+   60. sr_rejection_score
+   61. sr_trigger_score
+   62. reversal_quality
+
+Metadata:
+  stop_atr = 0.75
+  model_kind = classifier
+  rf_params = {'hidden_sizes': (64, 32), 'dropout': 0.2, 'lr': 0.001, 'weight_decay': 0.01, 'batch_size': 256, 'max_epochs': 300, 'patience': 15, 'val_fraction': 0.1, 'random_state': 42}
+  label_mode = touch_vwap
+  min_net_r = 0.25
+  sample_weight = none
+  slippage = 0.01
+  test_year = 2024
+  regression_target = None
+  target_mode = vwap
+  saved_at = 2026-02-18T19:33:36.425657
+  model_type = PnLModelWrapper

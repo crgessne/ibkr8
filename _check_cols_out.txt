@@ -1,0 +1,43 @@
+﻿shape: (2515, 19)
+cols: ['entry_bar_index', 'exit_bar_index', 'entry_datetime', 'exit_datetime', 'is_long', 'entry_price', 'exit_price', 'exit_reason', 'gross_pnl', 'net_pnl', 'costs', 'margin_cost', 'margin_borrowed', 'notional', 'hold_hours', 'shares', 'risk_dollars', 'vwap_dist_atr', 'per_trade_rr']
+
+   entry_price  exit_price exit_reason    gross_pnl      net_pnl  shares  risk_dollars  vwap_dist_atr  per_trade_rr
+0       246.42  245.554821        stop -3510.894643 -3632.634643    4058   3510.894643       0.289507      0.386010
+1       245.93  246.391842        vwap  1877.849428  1755.869428    4066   3994.845000       0.352551      0.470068
+2       249.60  250.843929        stop -4983.177857 -5103.357857    4006   4983.177857       1.483409      1.977879
+3       249.61  248.002135        vwap  6441.107051  6320.927051    4006   5993.977500       0.805947      1.074596
+4       248.15  248.021579        vwap   517.406825   396.536825    4029   5354.972679       0.072466      0.096622
+5       248.91  250.091786        stop -4747.233214 -4867.743214    4017   4747.233214       0.548031      0.730708
+6       250.00  250.858214        stop -3432.857143 -3552.857143    4000   3432.857143       1.513850      2.018466
+7       250.27  248.490144        vwap  7110.526250  6990.676250    3995   2116.636607       2.519514      3.359351
+8       248.08  248.565924        vwap  1958.273151  1837.373151    4030   2038.028571       0.720650      0.960866
+9       248.76  248.563655        vwap   789.112366   668.542366    4019   1957.109464       0.302402      0.403203
+
+exit_reason value_counts:
+exit_reason
+vwap    1321
+stop    1137
+eod       57
+Name: count, dtype: int64
+
+vwap_dist_atr describe:
+count    2515.000000
+mean        0.999074
+std         0.956831
+min         0.000191
+25%         0.316710
+50%         0.702523
+75%         1.356628
+max         5.949036
+Name: vwap_dist_atr, dtype: float64
+
+per_trade_rr describe:
+count    2515.000000
+mean        1.332099
+std         1.275774
+min         0.000255
+25%         0.422280
+50%         0.936697
+75%         1.808837
+max         7.932048
+Name: per_trade_rr, dtype: float64

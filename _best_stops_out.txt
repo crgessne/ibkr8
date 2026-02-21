@@ -1,0 +1,189 @@
+================================================================================
+DEEP ANALYSIS OF PROFITABLE STOP LEVELS
+================================================================================
+
+================================================================================
+LOADING DATA
+================================================================================
+[OK] Loaded 197,419 bars
+[OK] Date range: 2015-12-29 14:30:00+00:00 to 2026-02-06 15:05:00+00:00
+[OK] Data span: 3692 days
+[OK] Dataset exceeds 100K bars requirement
+
+================================================================================
+  STOP = 0.25 ATR
+================================================================================
+
+  Top 10 features:
+    vwap_slope_5                    0.1915
+    vwap_slope                      0.1681
+    vol_pct_complete                0.0592
+    vwap_width_atr                  0.0553
+    price_to_vwap_atr               0.0417
+    pct_of_day_range                0.0334
+    day_range_atr                   0.0303
+    rel_vol                         0.0292
+    open_vs_vwap_atr                0.0275
+    extension_speed                 0.0273
+
+  --- Top-N sweep ---
+     top_n  trades      WR      NetPnL    AvgPnL  LongPct  AvgDist   AvgRR
+        50      50   6.0%  $   -1,709  $  -34.2   96.0%    2.59   10.4
+       100     100  11.0%  $       19  $    0.2   91.0%    2.44    9.8
+       200     200  12.0%  $    2,115  $   10.6   73.5%    2.39    9.6
+       300     300  11.3%  $    1,748  $    5.8   65.3%    2.36    9.4
+       500     500  11.6%  $    1,678  $    3.4   55.2%    2.28    9.1
+       750     750  11.6%  $      751  $    1.0   45.7%    2.22    8.9
+      1000    1000  12.1%  $      138  $    0.1   39.8%    2.14    8.5
+      2000    2000  12.7%  $   -7,855  $   -3.9   32.7%    1.94    7.8
+      5000    5000  15.4%  $  -25,821  $   -5.2   39.1%    1.61    6.4
+
+  --- Direction filter (top 500) ---
+  ALL              n= 500  WR=11.6%  NetPnL=$    1,678  Avg=$    3.4
+  LONG only        n= 276  WR=10.5%  NetPnL=$   -1,140  Avg=$   -4.1
+  SHORT only       n= 224  WR=12.9%  NetPnL=$    2,818  Avg=$   12.6
+
+  --- Min distance filter (top 500, then filter) ---
+  dist>=0.0 ATR:  n= 500  WR=11.6%  NetPnL=$    1,678  Avg=$    3.4
+  dist>=0.5 ATR:  n= 500  WR=11.6%  NetPnL=$    1,678  Avg=$    3.4
+  dist>=1.0 ATR:  n= 486  WR=11.5%  NetPnL=$    1,898  Avg=$    3.9
+  dist>=1.5 ATR:  n= 428  WR=10.3%  NetPnL=$      266  Avg=$    0.6
+  dist>=2.0 ATR:  n= 310  WR= 7.4%  NetPnL=$   -3,025  Avg=$   -9.8
+  dist>=2.5 ATR:  n= 185  WR= 4.9%  NetPnL=$   -2,807  Avg=$  -15.2
+  dist>=3.0 ATR:  n=  89  WR= 3.4%  NetPnL=$   -2,050  Avg=$  -23.0
+
+  --- Combined: LONG + min dist (top 500) ---
+  LONG + dist>=0.0:  n= 276  WR=10.5%  NetPnL=$   -1,140  Avg=$   -4.1
+  LONG + dist>=0.5:  n= 276  WR=10.5%  NetPnL=$   -1,140  Avg=$   -4.1
+  LONG + dist>=1.0:  n= 273  WR=10.3%  NetPnL=$   -1,405  Avg=$   -5.1
+  LONG + dist>=1.5:  n= 253  WR= 9.9%  NetPnL=$   -1,993  Avg=$   -7.9
+  LONG + dist>=2.0:  n= 168  WR= 7.1%  NetPnL=$   -3,582  Avg=$  -21.3
+
+  --- Monthly P&L (top 500) ---
+  2024-01:  n=  8  WR=12.5%  NetPnL=$     -55
+  2024-02:  n=  5  WR= 0.0%  NetPnL=$    -173
+  2024-03:  n=  9  WR= 0.0%  NetPnL=$    -242
+  2024-04:  n= 16  WR=12.5%  NetPnL=$     410
+  2024-05:  n= 13  WR=15.4%  NetPnL=$      93
+  2024-06:  n= 20  WR=15.0%  NetPnL=$     -91
+  2024-07:  n= 15  WR=13.3%  NetPnL=$     128
+  2024-08:  n= 10  WR= 0.0%  NetPnL=$    -355
+  2024-09:  n=  6  WR= 0.0%  NetPnL=$    -233
+  2024-10:  n= 18  WR=11.1%  NetPnL=$     126
+  2024-11:  n= 36  WR= 8.3%  NetPnL=$    -669
+  2024-12:  n= 30  WR=10.0%  NetPnL=$    -407
+  2025-01:  n= 22  WR=18.2%  NetPnL=$   1,142
+  2025-02:  n= 27  WR=25.9%  NetPnL=$   2,117
+  2025-03:  n= 23  WR=21.7%  NetPnL=$   1,883
+  2025-04:  n= 24  WR= 4.2%  NetPnL=$    -866
+  2025-05:  n=  9  WR=33.3%  NetPnL=$   1,141
+  2025-06:  n= 35  WR=11.4%  NetPnL=$      78
+  2025-07:  n= 14  WR=14.3%  NetPnL=$     -50
+  2025-08:  n= 21  WR=14.3%  NetPnL=$      95
+  2025-09:  n= 19  WR=10.5%  NetPnL=$     189
+  2025-10:  n= 41  WR= 2.4%  NetPnL=$  -2,245
+  2025-11:  n= 27  WR=18.5%  NetPnL=$   1,093
+  2025-12:  n= 28  WR= 3.6%  NetPnL=$  -1,378
+  2026-01:  n= 18  WR= 0.0%  NetPnL=$    -893
+  2026-02:  n=  6  WR=33.3%  NetPnL=$     842
+
+  --- Predicted P&L decile analysis (all test data) ---
+  D0: n= 4030  WR= 5.4%  AvgPred=$  -21.2  AvgActual=$  -19.9  TotalNet=$   -80,271
+  D1: n= 4029  WR=12.5%  AvgPred=$  -13.6  AvgActual=$  -15.7  TotalNet=$   -63,151
+  D2: n= 4029  WR=15.4%  AvgPred=$  -10.4  AvgActual=$  -12.0  TotalNet=$   -48,532
+  D3: n= 4029  WR=17.2%  AvgPred=$   -8.4  AvgActual=$  -10.6  TotalNet=$   -42,637
+  D4: n= 4030  WR=19.0%  AvgPred=$   -7.0  AvgActual=$   -8.3  TotalNet=$   -33,492
+  D5: n= 4029  WR=17.6%  AvgPred=$   -5.9  AvgActual=$   -7.0  TotalNet=$   -28,384
+  D6: n= 4029  WR=16.0%  AvgPred=$   -5.0  AvgActual=$   -6.3  TotalNet=$   -25,374
+  D7: n= 4029  WR=17.1%  AvgPred=$   -4.4  AvgActual=$   -5.9  TotalNet=$   -23,651
+  D8: n= 4029  WR=18.4%  AvgPred=$   -4.0  AvgActual=$   -3.9  TotalNet=$   -15,899
+  D9: n= 4030  WR=14.5%  AvgPred=$   -2.6  AvgActual=$   -5.7  TotalNet=$   -22,850
+
+================================================================================
+  STOP = 0.35 ATR
+================================================================================
+
+  Top 10 features:
+    vwap_slope_5                    0.2115
+    vwap_slope                      0.1812
+    vol_pct_complete                0.0643
+    vwap_width_atr                  0.0460
+    price_to_vwap_atr               0.0379
+    day_range_atr                   0.0354
+    pct_of_day_range                0.0306
+    rel_vol                         0.0290
+    hour                            0.0288
+    open_vs_vwap_atr                0.0270
+
+  --- Top-N sweep ---
+     top_n  trades      WR      NetPnL    AvgPnL  LongPct  AvgDist   AvgRR
+        50      50   6.0%  $   -1,412  $  -28.2   16.0%    2.88    8.2
+       100     100   9.0%  $   -1,396  $  -14.0   20.0%    2.76    7.9
+       200     200  10.5%  $   -3,061  $  -15.3   19.0%    2.58    7.4
+       300     300  13.0%  $   -1,039  $   -3.5   20.0%    2.47    7.1
+       500     500  15.4%  $    1,068  $    2.1   21.2%    2.37    6.8
+       750     750  15.3%  $   -2,385  $   -3.2   24.5%    2.23    6.4
+      1000    1000  15.8%  $   -3,160  $   -3.2   24.0%    2.13    6.1
+      2000    2000  18.4%  $  -10,816  $   -5.4   27.7%    1.84    5.2
+      5000    5000  21.6%  $  -25,273  $   -5.1   38.9%    1.53    4.4
+
+  --- Direction filter (top 500) ---
+  ALL              n= 500  WR=15.4%  NetPnL=$    1,068  Avg=$    2.1
+  LONG only        n= 106  WR=16.0%  NetPnL=$     -802  Avg=$   -7.6
+  SHORT only       n= 394  WR=15.2%  NetPnL=$    1,870  Avg=$    4.7
+
+  --- Min distance filter (top 500, then filter) ---
+  dist>=0.0 ATR:  n= 500  WR=15.4%  NetPnL=$    1,068  Avg=$    2.1
+  dist>=0.5 ATR:  n= 497  WR=15.3%  NetPnL=$    1,178  Avg=$    2.4
+  dist>=1.0 ATR:  n= 477  WR=14.7%  NetPnL=$    1,133  Avg=$    2.4
+  dist>=1.5 ATR:  n= 400  WR=14.5%  NetPnL=$    2,728  Avg=$    6.8
+  dist>=2.0 ATR:  n= 316  WR=13.6%  NetPnL=$    2,208  Avg=$    7.0
+  dist>=2.5 ATR:  n= 217  WR=12.0%  NetPnL=$      895  Avg=$    4.1
+  dist>=3.0 ATR:  n= 125  WR=11.2%  NetPnL=$      -13  Avg=$   -0.1
+
+  --- Combined: LONG + min dist (top 500) ---
+  LONG + dist>=0.0:  n= 106  WR=16.0%  NetPnL=$     -802  Avg=$   -7.6
+  LONG + dist>=0.5:  n= 106  WR=16.0%  NetPnL=$     -802  Avg=$   -7.6
+  LONG + dist>=1.0:  n= 104  WR=15.4%  NetPnL=$     -947  Avg=$   -9.1
+  LONG + dist>=1.5:  n=  89  WR=15.7%  NetPnL=$     -627  Avg=$   -7.0
+  LONG + dist>=2.0:  n=  53  WR=13.2%  NetPnL=$   -1,101  Avg=$  -20.8
+
+  --- Monthly P&L (top 500) ---
+  2024-01:  n=  3  WR=33.3%  NetPnL=$      94
+  2024-02:  n=  3  WR= 0.0%  NetPnL=$    -133
+  2024-03:  n=  4  WR= 0.0%  NetPnL=$    -145
+  2024-04:  n= 12  WR=41.7%  NetPnL=$   1,185
+  2024-05:  n= 12  WR=16.7%  NetPnL=$      10
+  2024-06:  n= 20  WR=15.0%  NetPnL=$    -237
+  2024-07:  n= 15  WR=20.0%  NetPnL=$    -110
+  2024-08:  n=  7  WR=14.3%  NetPnL=$    -261
+  2024-09:  n=  8  WR=12.5%  NetPnL=$    -172
+  2024-10:  n= 12  WR=41.7%  NetPnL=$   1,171
+  2024-11:  n= 43  WR= 9.3%  NetPnL=$  -1,672
+  2024-12:  n= 33  WR= 6.1%  NetPnL=$  -2,349
+  2025-01:  n= 27  WR=11.1%  NetPnL=$    -314
+  2025-02:  n= 15  WR=80.0%  NetPnL=$   6,850
+  2025-03:  n= 30  WR= 6.7%  NetPnL=$    -712
+  2025-04:  n= 21  WR= 4.8%  NetPnL=$  -1,042
+  2025-05:  n= 16  WR=25.0%  NetPnL=$   1,218
+  2025-06:  n= 21  WR=19.0%  NetPnL=$   1,182
+  2025-07:  n= 10  WR=30.0%  NetPnL=$     635
+  2025-08:  n= 12  WR= 8.3%  NetPnL=$    -306
+  2025-09:  n= 34  WR= 2.9%  NetPnL=$  -1,912
+  2025-10:  n= 33  WR= 9.1%  NetPnL=$  -1,443
+  2025-11:  n= 42  WR=26.2%  NetPnL=$   1,163
+  2025-12:  n= 15  WR=13.3%  NetPnL=$     -42
+  2026-01:  n= 51  WR= 5.9%  NetPnL=$  -1,518
+  2026-02:  n=  1  WR= 0.0%  NetPnL=$     -71
+
+  --- Predicted P&L decile analysis (all test data) ---
+  D0: n= 4030  WR= 5.8%  AvgPred=$  -29.7  AvgActual=$  -24.6  TotalNet=$   -99,169
+  D1: n= 4029  WR=13.0%  AvgPred=$  -17.8  AvgActual=$  -23.4  TotalNet=$   -94,476
+  D2: n= 4029  WR=18.0%  AvgPred=$  -13.2  AvgActual=$  -14.2  TotalNet=$   -57,346
+  D3: n= 4029  WR=19.8%  AvgPred=$  -10.3  AvgActual=$  -10.0  TotalNet=$   -40,325
+  D4: n= 4030  WR=23.1%  AvgPred=$   -8.0  AvgActual=$   -8.2  TotalNet=$   -33,209
+  D5: n= 4029  WR=25.9%  AvgPred=$   -6.5  AvgActual=$  -11.1  TotalNet=$   -44,849
+  D6: n= 4029  WR=25.9%  AvgPred=$   -5.5  AvgActual=$   -9.8  TotalNet=$   -39,457
+  D7: n= 4029  WR=25.0%  AvgPred=$   -4.8  AvgActual=$   -6.7  TotalNet=$   -26,898
+  D8: n= 4029  WR=23.5%  AvgPred=$   -4.3  AvgActual=$   -5.6  TotalNet=$   -22,451
+  D9: n= 4030  WR=20.9%  AvgPred=$   -2.9  AvgActual=$   -5.8  TotalNet=$   -23,494

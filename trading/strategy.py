@@ -30,6 +30,8 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
+from trading.config import MIN_REWARD_RISK
+
 log = logging.getLogger("trading.strategy")
 
 
@@ -66,7 +68,11 @@ class VWAPReversionStrategy:
     prob_scale_min : float
         Minimum probability scaling fraction.
     capital : float
-        Available capital for sizing.
+        Available capital for sizing.    min_rr : float
+        Minimum reward:risk ratio required to enter.
+        RR = |entry - VWAP| / (stop_atr * ATR).
+        Backtest uses min_rr=0.3 as a soft floor — live must match or
+        it trades setups the model was never trained on.
     """
 
     def __init__(
@@ -78,6 +84,7 @@ class VWAPReversionStrategy:
         risk_pct: float = 0.01,
         prob_scale_min: float = 0.30,
         capital: float = 1_000_000,
+        min_rr: float = MIN_REWARD_RISK,
     ):
         self.model = model
         self.features = features
@@ -86,6 +93,7 @@ class VWAPReversionStrategy:
         self.risk_pct = risk_pct
         self.prob_scale_min = prob_scale_min
         self.capital = capital
+        self.min_rr = min_rr
 
     def evaluate(self, indicators: Dict[str, float]) -> Tuple[Optional[Signal], Optional[str]]:
         """Evaluate a single bar's indicators and return a Signal or rejection reason.
@@ -130,6 +138,18 @@ class VWAPReversionStrategy:
         atr = float(indicators["atr"])
         vwap = float(indicators.get("vwap", entry_price))
 
+        # ── RR filter (matches backtest min_rr) ──────────────────────
+        # vwap_width_atr = |entry - VWAP| / ATR  (same formula as pipeline)
+        # RR             = vwap_width_atr / stop_atr
+        if self.min_rr > 0 and atr > 0:
+            vwap_width_atr = abs(entry_price - vwap) / atr
+            rr = vwap_width_atr / self.stop_atr
+            if rr < self.min_rr:
+                direction = "LONG" if is_long_setup else "SHORT"
+                return None, (f"RR too low: {rr:.3f} < {self.min_rr:.2f} "
+                              f"(|entry-VWAP|=${abs(entry_price-vwap):.3f}, "
+                              f"stop=${self.stop_atr * atr:.3f}, setup={direction})")
+
         # Stop
         stop_dist = self.stop_atr * atr
         if is_long_setup:
@@ -147,7 +167,8 @@ class VWAPReversionStrategy:
             threshold=self.threshold,
             atr=atr,
             stop_atr=self.stop_atr,
-            risk_pct=self.risk_pct,            min_frac=self.prob_scale_min,
+            risk_pct=self.risk_pct,
+            min_frac=self.prob_scale_min,
             capital=self.capital,
             entry_price=entry_price,
         )

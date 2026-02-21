@@ -1,0 +1,2 @@
+cols=143
+['vwap_sigma', 'rejection_wick_pct', 'stoch_k', 'htf_trend_aligned', 'atr_ratio_5', 'atr_regime', 'reversion_velocity_1', 'pct_of_max_extension', 'extension_decelerating', 'gap_atr', 'vwap_slope_atr', 'vwap_stability']

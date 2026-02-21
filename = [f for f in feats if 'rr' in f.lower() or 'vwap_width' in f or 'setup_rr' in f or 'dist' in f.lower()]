@@ -1,0 +1,16 @@
+ data/slippage_impact_analysis.md |   2 [32m+[m[31m-[m
+ examples/simulate_rf_vwap.py     | 394 [32m+++++++++++++++++++++++++++++++++++++++[m
+ scripts/master_pipeline.py       |  62 [32m+++[m[31m---[m
+ sim_trading/__init__.py          |  42 [32m+++++[m
+ sim_trading/broker_fees.py       | 216 [32m+++++++++++++++++++++[m
+ sim_trading/execution_model.py   | 248 [32m++++++++++++++++++++++++[m
+ sim_trading/order_manager.py     | 348 [32m++++++++++++++++++++++++++++++++++[m
+ sim_trading/portfolio.py         | 369 [32m++++++++++++++++++++++++++++++++++++[m
+ sim_trading/simulator.py         | 309 [32m++++++++++++++++++++++++++++++[m
+ src/indicators.py                |  19 [32m+[m[31m-[m
+ src/label_generator.py           |  13 [32m+[m[31m-[m
+ trading/config.py                |  15 [32m+[m[31m-[m
+ trading/engine.py                |  18 [32m+[m[31m-[m
+ trading/runner.py                |   6 [32m+[m
+ trading/strategy.py              |  23 [32m++[m[31m-[m
+ 15 files changed, 2047 insertions(+), 37 deletions(-)

@@ -1,0 +1,75 @@
+  🏷️  Generating labels for 197,419 bars...
+  🏷️  Computing labels for 9 stop widths: [0.25, 0.35, 0.4, 0.5, 0.6, 0.75, 1.0, 1.25, 1.5]
+  🏷️  [1/9] Computing labels for stop=0.25 ATR...
+  🏷️  [2/9] Computing labels for stop=0.35 ATR...
+  🏷️  [3/9] Computing labels for stop=0.4 ATR...
+  🏷️  [4/9] Computing labels for stop=0.5 ATR...
+  🏷️  [5/9] Computing labels for stop=0.6 ATR...
+  🏷️  [6/9] Computing labels for stop=0.75 ATR...
+  🏷️  [7/9] Computing labels for stop=1.0 ATR...
+  🏷️  [8/9] Computing labels for stop=1.25 ATR...
+  🏷️  [9/9] Computing labels for stop=1.5 ATR...
+  ✅ Labels generated! Added 9 label columns
+Traceback (most recent call last):
+  File "C:\Users\Administrator\ibkr8\scripts\master_pipeline.py", line 2486, in <module>
+    results = main()
+  File "C:\Users\Administrator\ibkr8\scripts\master_pipeline.py", line 2045, in main
+    pnl_metrics = calculate_dollar_pnl_with_capital_constraint(
+        y_actual=y_selected,
+    ...<9 lines>...
+        log_file_path=log_file,
+    )
+  File "C:\Users\Administrator\ibkr8\scripts\master_pipeline.py", line 1235, in calculate_dollar_pnl_with_capital_constraint
+    log_df.to_csv(log_file_path, index=False)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\generic.py", line 3988, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        path_or_buf,
+        ^^^^^^^^^^^^
+    ...<14 lines>...
+        storage_options=storage_options,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\io\formats\format.py", line 1025, in to_csv
+    csv_formatter.save()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\io\formats\csvs.py", line 272, in save
+    self._save()
+    ~~~~~~~~~~^^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\io\formats\csvs.py", line 277, in _save
+    self._save_body()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\io\formats\csvs.py", line 315, in _save_body
+    self._save_chunk(start_i, end_i)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\io\formats\csvs.py", line 322, in _save_chunk
+    res = df._get_values_for_csv(**self._number_format)
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\frame.py", line 1396, in _get_values_for_csv
+    mgr = self._mgr.get_values_for_csv(
+        float_format=float_format,
+    ...<3 lines>...
+        quoting=quoting,
+    )
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 626, in get_values_for_csv
+    return self.apply(
+           ~~~~~~~~~~^
+        "get_values_for_csv",
+        ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        decimal=decimal,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 442, in apply
+    applied = getattr(b, f)(**kwargs)
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\internals\blocks.py", line 629, in get_values_for_csv
+    result = get_values_for_csv(
+        self.values,
+    ...<4 lines>...
+        decimal=decimal,
+    )
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 8154, in get_values_for_csv
+    values = values.astype(object, copy=False)
+KeyboardInterrupt

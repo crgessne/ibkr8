@@ -1,0 +1,108 @@
+# Session Summary — 2026-02-19
+
+## PROJECT
+- **Workspace**: `C:\Users\Administrator\ibkr8`
+- **OS**: Windows, PowerShell
+- **Python**: `.venv` with `ib_insync 0.9.86`, `torch 2.6.0+cpu`, `scikit-learn 1.8.0`, `pandas 3.0.0`, `numpy 2.4.2`
+- **IBKR Gateway**: Running on port 7497 (paper), confirmed via `netstat`
+
+---
+
+## WHAT WAS DONE THIS SESSION
+
+### 1. Margin cost fix (DONE — prior session, carried forward)
+- `sim_trading/simulate_streaming_clean.py`: `ibkr_margin_cost()` rewritten to match pipeline's per-tier loop; `_close_trade()` accepts `available_capital` param
+
+### 2. Git commit & push (DONE — prior session)
+- `master_pipeline.py` committed as `8294b78`, pushed to `origin/master`
+
+### 3. Built IBKR trading platform in `trading/` (DONE)
+Complete package with 9 files:
+- **`trading/__init__.py`** — Package docstring only
+- **`trading/__main__.py`** — `python -m trading` entry point
+- **`trading/config.py`** — Constants: ports (paper=7497, live=7496), capital ($1M), risk (1%), bar size mappings/aliases
+- **`trading/risk.py`** — `ibkr_margin_cost()`, `compute_shares()`, `round_trip_cost()` — match master_pipeline.py exactly
+- **`trading/indicators.py`** — `LiveIndicators` class: rolling deque, lazy-imports `calculate_core_indicators` from `scripts/master_pipeline.py`
+- **`trading/orders.py`** — `OrderManager`: bracket orders (entry + stop + target via OCA), market orders, fill/exit callbacks
+- **`trading/strategy.py`** — `VWAPReversionStrategy`: stateless signal generator, model.predict_proba → Signal dataclass
+- **`trading/engine.py`** — `TradingEngine`: connects to IBKR, qualifies contract, warms up with historical bars, subscribes to real-time data, processes bar→indicator→strategy→order pipeline, EOD flatten
+- **`trading/runner.py`** — CLI: `--paper`/`--live`, `--model`, `--symbol`, `--bar-size`, `--capital`, `--risk-pct`, `--stop-atr`, `--threshold`, `--max-concurrent`, `--host`, `--client-id`, `--lookback`, `--log-level`
+
+### 4. VS Code debug config (DONE)
+- Created `.vscode/launch.json` with 4 configs:
+  - **Trading: Paper 5m** — paper, 5-min bars, DEBUG logging
+  - **Trading: Paper 1m** — paper, 1-min bars, DEBUG logging
+  - **Trading: Paper 5s** — paper, 5-sec bars, DEBUG logging
+  - **Trading: Live 5m (CAUTION)** — live, 5-min bars, INFO logging
+- All use model `models/rf_vwap_stop0.75_20260218_192628.pkl` on TSLA
+- `justMyCode: false` so you can step into ib_insync
+
+### 5. Bug fix: pd.Timestamp tz conflict (DONE)
+- `engine.py` `_warmup()`, `_on_realtime_bar()`, `_on_historical_bar_update()` all had:
+  ```python
+  pd.Timestamp(b.date, tz="UTC")  # CRASHES — b.date already has tzinfo
+  ```
+- Fixed to:
+  ```python
+  ts = pd.Timestamp(b.date)
+  ts = ts.tz_localize("UTC") if ts.tzinfo is None else ts.tz_convert("UTC")
+  ```
+
+---
+
+## CURRENT STATUS — READY TO RUN
+
+### To launch paper trading:
+1. Ensure IBKR TWS or Gateway is running (port 7497 confirmed listening)
+2. In VS Code: **F5** → select **"Trading: Paper 5m"**
+3. Or from terminal:
+   ```
+   .\.venv\Scripts\python.exe -m trading.runner --model models\rf_vwap_stop0.75_20260218_192628.pkl --paper --bar-size 5m --log-level DEBUG
+   ```
+
+### What happens on launch:
+1. Connects to IBKR paper (127.0.0.1:7497)
+2. Qualifies TSLA contract
+3. Fetches ~200 historical 5-min bars for indicator warm-up
+4. Subscribes to keepUpToDate 5-min bars
+5. On each new bar: compute indicators → model.predict_proba → if prob ≥ 0.50, submit bracket order (MKT entry + stop + VWAP target via OCA)
+6. EOD flatten 5 min before close (15:55 ET)
+7. Ctrl+C → flatten all → disconnect
+
+### First run may reveal:
+- Feature mismatch (model expects features that `calculate_core_indicators` doesn't produce, or vice versa) — will show as `None` values in feature vector, signal skipped
+- The model's `stop_atr` from metadata will be auto-used (0.75 for this model)
+- Market hours matter — outside RTH, no bars arrive for `useRTH=True`
+
+---
+
+## PENDING TASKS
+1. **Run paper trading** — launch via F5 or terminal, observe first connection + warm-up + signal cycle
+2. **Git commit** the `trading/` package (9 files) + `.vscode/launch.json`
+3. **Clean up temp files** — dozens of `_*.py` and `_*.txt` files in project root (test artifacts from prior sessions)
+4. **Possible issues to debug on first run**:
+   - Feature name mismatches between model metadata and `calculate_core_indicators` output
+   - `calculate_core_indicators` may expect columns that live bars don't have (e.g., `date` column handling)
+   - `reqRealTimeBars` callback signature — `bars` param might be a single `RealTimeBarList` not a list with `hasNewBar`
+   - OCA bracket order sequencing with IBKR paper account
+
+---
+
+## KEY DEPENDENCIES
+- `src/model_persistence.py` — `load_model()` for .pkl files
+- `scripts/master_pipeline.py` — `calculate_core_indicators()` (~650 lines), lazy-imported by `trading/indicators.py`
+- `ib_insync` — all IBKR connectivity
+
+## MODEL FILES (latest)
+```
+models/rf_vwap_stop0.75_20260218_192628.pkl  (32KB, used in launch.json)
+models/rf_vwap_stop1.0_20260218_192628.pkl
+models/rf_vwap_stop1.25_20260218_192628.pkl
+models/rf_vwap_stop1.5_20260218_192628.pkl
+models/rf_vwap_stop0.6_20260218_192628.pkl
+```
+
+## TERMINAL NOTES
+- PowerShell terminal output capture via tools is unreliable (stdout buffering)
+- Background process tool (`isBackground: true`) throws `Cannot read properties of undefined` errors — use `Start-Process` or VS Code debugger instead
+- Workaround for output: write to file + read with `read_file` tool

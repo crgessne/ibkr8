@@ -6,7 +6,7 @@
 ---
 
 ## Summary
-
+no w
 This analysis shows how different slippage assumptions affect the P&L of the recommended strategy (1.25 ATR stop width with RF threshold ≥0.50).
 
 **Key Finding**: With **0.02 slippage** (vs default 0.01), the recommended strategy shows:

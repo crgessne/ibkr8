@@ -1,0 +1,273 @@
+================================================================================
+SESSION SUMMARY — February 18, 2026
+IBKR8 Streaming Indicator Precomputation & Pipeline w/ Notional Cap
+================================================================================
+
+PURPOSE: Seed file for next chat session. Contains full state of what was done,
+what changed, current results, and what's pending.
+
+================================================================================
+TASK DESCRIPTION
+================================================================================
+Building a streaming indicator precomputation system for IBKR trading pipeline.
+Goal: pre-compute indicators matching live/streaming conditions (vol_pct_complete=1.0,
+no future lookahead) so models train on data matching inference. System uses
+`precompute_streaming_indicators.py` (multiprocessing, day-based) to save Parquet
+files, fed into `master_pipeline.py` via `--indicators-file` flag. The simulator's
+indicators must exactly match the precomputed indicators used for training.
+
+This is a LIVE PAPER TRADING SIMULATOR — simulates exactly what would happen in
+live trading, bar-by-bar, no lookahead.
+
+Critical constraint: positions must be capped so notional (shares × price) never
+exceeds $1M capital. Risk 1% of $1M = $10K max risk per trade, but share count
+must also respect capital limits.
+
+================================================================================
+WHAT WAS COMPLETED (ALL SESSIONS)
+================================================================================
+
+1. Fixed `precompute_streaming_indicators.py` — Fixed typos, concatenated line
+   bugs, added --ticker/--date-range CLI args, target_dates_only parameter.
+
+2. Generated 2023-2024 streaming indicators —
+   `tsla_5min_streaming_2023-01-01_2024-12-31.parquet` (31 MB, 38,976 rows × 143 cols).
+
+3. Ran master_pipeline with nn_pnl model (UNCAPPED) — train 2023, test 2024.
+   Best stop: 0.50 ATR → $1,318,052 P&L (38.7% WR, 2,867 trades, $460/trade avg).
+   Used risk-based sizing: risk_pct=1%, risk_dollars=$10,000/trade,
+   shares = $10K / (stop_atr × ATR), prob-scaled 30%-100%.
+   Full shares range: 2,114-84,084 (pre-clip), clipped to 1-9999. avg_shares=9,152.
+   Model saved as `rf_vwap_stop0.5_20260217_154448.pkl` (PnLModelWrapper, 62 features).
+
+4. Achieved 100% indicator match — Verified via compare_indicators.py on two days:
+   2024-06-17 and 2024-03-15, all 62 features × all bars match with zero diff.
+
+5. Rewrote `simulate_streaming_clean.py` — Complete rewrite as live paper trading
+   simulator. Implemented risk-based position sizing matching pipeline's prob_weighted
+   mode exactly.
+
+6. Fixed multiple simulator bugs:
+   - is_long_setup filter bug → changed to direction-only
+   - EOD exit timing → close of last bar of entry day
+   - Setup filter made conditional (--setup-filter CLI arg, default OFF)
+   - Flat-to-flat bug → added flat_until_dt matching pipeline's flat_time logic
+   - Added notional cap: max_shares = floor(capital / entry_price)
+
+7. Ran streaming simulator WITH notional cap — Results: 2,900 trades, 40.4% WR,
+   $642,554 net P&L (64.3% return), avg shares=4,626 (range 1,262-7,155).
+   Stop=0.5 ATR. Uses model rf_vwap_stop0.5_20260217_154448.pkl.
+
+8. Added notional cap to master_pipeline.py — In prob_weighted sizing section
+   (~line 2906), both risk-based and fixed-shares paths now cap:
+   max_shares = floor(CAPITAL_CAP / entry_price), shares = min(shares, max_shares).
+
+9. Added Trade Size Distribution section to master_pipeline.py MD report:
+   - simulate_trade_level_pnl() (~line 2338): Added ~70 lines computing share_dist
+     dict (share stats, buckets, notional, risk, cap vs risk counts, long/short,
+     exit breakdown). Returns as 'share_dist': share_dist in metrics dict.
+   - Main loop row dict (~line 3141): Added 'share_dist' propagation.
+   - MD writer (~line 3505): New "## Trade Size Distribution" section for best stop
+     only, with 7 subsections: Share Size Stats, Share Size Buckets, Notional
+     Distribution, Risk Per Trade, Sizing Constraint Breakdown, Long vs Short,
+     By Exit Reason.
+
+10. Fixed multiple concatenated lines throughout codebase — In simulate_streaming_clean.py,
+    diagnose_edge_conditions.py, streaming_simulator.py, master_pipeline.py.
+
+11. Re-ran master_pipeline WITHOUT notional cap — Confirmed identical results to
+    prior uncapped run: stop 0.5 → $1,318,052 (2,867 trades). This validated
+    that no other code changes affected results.
+
+12. Ran master_pipeline WITH notional cap — NEW RUN this session.
+    Command:
+    cd C:\Users\Administrator\ibkr8 ; .venv\Scripts\python.exe scripts\master_pipeline.py --model-kind nn_pnl --select-mode prob_weighted --prob-threshold 0.50 --prob-risk-pct 0.01 --train-years 2023-2023 --test-years 2024-2024 --indicators-file data/tsla_5min_streaming_2023-01-01_2024-12-31.parquet
+
+================================================================================
+RESULTS COMPARISON: UNCAPPED vs CAPPED PIPELINE
+================================================================================
+
+--- UNCAPPED (run 20260217_154448, 20260218_095814) ---
+Best stop: 0.50 ATR
+  Trades: 2,867 | WR: 38.7% | Net P&L: $1,318,052 | Return: 131.8%
+  Avg shares: 9,152 (range 2,114-84,084 pre-clip, clipped to 9999)
+  Avg notional: $2,004,869 | Avg margin borrowed: $1,010,033
+  Total margin cost: $5,245
+  Grand total all stops: $6,493,734
+
+--- CAPPED at $1M (run 20260218_104421) ---
+Best stop: 0.75 ATR  ← CHANGED from 0.50
+  Trades: 2,514 | WR: 51.3% | Net P&L: $806,789 | Return: 80.7%
+  Avg shares: 4,549 (range 834-7,155)
+  Avg notional: $978,132 | Max notional: $1,000,000
+  Capital-capped: 90.9% of trades | Risk-sized: 9.1%
+  Margin cost: $0 (no margin needed)
+  Grand total all stops: $4,198,821
+
+--- CAPPED stop=0.50 specifically ---
+  Trades: 2,867 | WR: 38.7% | Net P&L: $644,001 | Return: 64.4%
+  (vs $1,318,052 uncapped = 48.9% of uncapped P&L)
+
+--- KEY INSIGHT ---
+With notional cap, best stop shifted from 0.50 to 0.75 ATR because:
+- Wider stops = fewer shares needed for same risk → less capital-capping
+- 0.75 ATR: 90.9% capital-capped vs would be higher at 0.50
+- Higher WR at wider stops compensates for smaller position sizes
+- No margin = no margin costs = pure returns
+
+--- STREAMING SIMULATOR (stop=0.50, capped) ---
+  Trades: 2,900 | WR: 40.4% | Net P&L: $642,554 | Return: 64.3%
+  Avg shares: 4,626 (range 1,262-7,155)
+  → Very close to pipeline capped stop=0.50: $644,001 (diff ~$1,447, <0.3%)
+  → Trade count differs (2,900 vs 2,867) due to realized-path sim differences
+
+================================================================================
+TRADE SIZE DISTRIBUTION (from capped pipeline, best stop 0.75 ATR)
+================================================================================
+
+Share Size: mean=4,549, median=4,598, std=1,163, min=834, max=7,155
+Notional: mean=$978,132, median=$999,883, min=$237,097, max=$1,000,000
+Risk/trade: mean=$3,489, median=$3,197, min=$1,020, max=$9,980
+
+Buckets: 0-1K: 0.1% | 1-2K: 1.4% | 2-3K: 14.0% | 3-4K: 11.7%
+         4-5K: 32.0% | 5-6K: 34.9% | 6-7K: 5.4% | 7-8K: 0.5%
+
+Long: 1,235 trades, avg $278/trade, total $343,934
+Short: 1,279 trades, avg $362/trade, total $462,854
+→ Shorts outperform longs ~1.35:1
+
+Exit reasons:
+  VWAP touch (win): 1,322 trades → $4,445,576
+  Stop loss:        1,135 trades → -$3,884,075
+  EOD close:           57 trades → $245,288
+
+================================================================================
+FILES & ARTIFACTS
+================================================================================
+
+KEY SCRIPTS:
+- C:\Users\Administrator\ibkr8\scripts\master_pipeline.py          (~3858 lines)
+- C:\Users\Administrator\ibkr8\sim_trading\simulate_streaming_clean.py (~650 lines)
+- C:\Users\Administrator\ibkr8\scripts\precompute_streaming_indicators.py (622 lines)
+- C:\Users\Administrator\ibkr8\scripts\compare_indicators.py       (~613 lines)
+
+DATA FILES:
+- data\tsla_5min_streaming_2023-01-01_2024-12-31.parquet  (38,976 rows × 143 cols)
+- data\tsla_5min_10years.csv                               (source OHLCV data)
+- data\streaming_sim_trades.csv                            (2,900 trades, sim output)
+
+MODEL:
+- models\rf_vwap_stop0.5_20260217_154448.pkl  (PnLModelWrapper, 62 features)
+
+PIPELINE REPORTS:
+- data\master_pipeline_summary_TSLA_20260217_154448.md  (uncapped, best=0.50)
+- data\master_pipeline_summary_TSLA_20260218_095814.md  (uncapped re-run, best=0.50)
+- data\master_pipeline_summary_TSLA_20260218_104421.md  (CAPPED $1M, best=0.75)
+- data\master_pipeline_results_TSLA_20260218_104421.csv (capped results CSV)
+
+LOGS:
+- _streaming_nn_pnl_2023_2024.txt  (original pipeline log)
+- _pipeline_rerun.txt              (re-run pipeline log)
+- _pipeline_capped.txt             (capped pipeline log)
+
+================================================================================
+CODE CHANGES MADE (master_pipeline.py)
+================================================================================
+
+1. NOTIONAL CAP in prob_weighted sizing (~line 2906):
+   Added after shares are computed:
+     max_shares_notional = int(CAPITAL_CAP // entry_price)
+     shares = min(shares, max_shares_notional)
+   Applied in both risk-based (prob-risk-pct > 0) and fixed-shares paths.
+
+2. TRADE SIZE DISTRIBUTION computation in simulate_trade_level_pnl() (~line 2338):
+   After yearly P&L section, added ~70 lines computing share_dist dict with:
+   - Share stats (mean/median/std/min/max/percentiles)
+   - Histogram buckets (0-1K, 1-2K, ..., 9-10K, 10K+)
+   - Notional distribution (mean/median/min/max)
+   - Risk per trade (mean/median/min/max)
+   - Capital-capped vs risk-sized counts
+   - Long vs short breakdown
+   - Exit reason breakdown
+   Returns 'share_dist': share_dist in metrics dict.
+
+3. SHARE_DIST PROPAGATION in main loop row dict (~line 3141):
+   Added 'share_dist': pnl_metrics.get('share_dist', {})
+
+4. MD REPORT SECTION (~line 3505):
+   New "## Trade Size Distribution" section for best stop only, between
+   Yearly P&L and Feature Importance. 7 subsections with formatted tables.
+
+5. Fixed concatenated line: `})        if yearly_rows_all:` → proper newline.
+
+6. PROB SCALE RANGE CLI ARGS (--prob-scale-min, --prob-scale-max):
+   Added two new CLI args to control the share scaling range in prob_weighted
+   + risk-based sizing mode:
+   - --prob-scale-min (default 0.3): fraction of full risk shares at prob threshold
+   - --prob-scale-max (default 1.0): fraction of full risk shares at P(win)=1.0
+   Previously hardcoded as min_frac=0.3, max_frac=1.0 (implicit).
+   Now configurable. Updated:
+   - CLI arg definitions (~line 2613-2630)
+   - Risk-based sizing logic (~line 2993): uses args.prob_scale_min/max
+   - Print output: shows scale=[30%-100%] in PROB-RISK log line
+   - MD report header (~line 3288): shows "Prob scale range: 30% – 100%"
+   Fixed concatenated line "Default: 20000." at ~line 2638.
+
+================================================================================
+ENVIRONMENT
+================================================================================
+
+- Python 3.13.3 venv: C:\Users\Administrator\ibkr8\.venv\Scripts\python.exe
+- Shell: PowerShell — use `;` not `&&` for chaining; no `tail` command
+- OS: Windows Server
+- Key packages: pandas, numpy, scikit-learn, torch, joblib
+
+================================================================================
+PIPELINE COMMAND (capped run)
+================================================================================
+
+cd C:\Users\Administrator\ibkr8 ; .venv\Scripts\python.exe scripts\master_pipeline.py --model-kind nn_pnl --select-mode prob_weighted --prob-threshold 0.50 --prob-risk-pct 0.01 --train-years 2023-2023 --test-years 2024-2024 --indicators-file data/tsla_5min_streaming_2023-01-01_2024-12-31.parquet
+
+================================================================================
+PENDING / NEXT STEPS
+================================================================================
+
+1. COMPARE SIMULATOR vs PIPELINE at stop=0.75 ATR:
+   The streaming simulator was run at stop=0.5. Need to re-run at stop=0.75
+   (the new best stop with cap) to compare. The simulator uses model
+   rf_vwap_stop0.5_20260217_154448.pkl which was trained at stop=0.5.
+   For stop=0.75, would need the stop=0.75 model from the pipeline run.
+
+2. GENERATE 2022-2023 STREAMING INDICATORS:
+   Run precompute_streaming_indicators.py with --date-range 2022-01-01:2023-12-31
+   to extend training data back further.
+
+3. FIX minutes_into_session UTC ISSUE:
+   Both pipeline and precompute use UTC hours in formula:
+   (hour-9)*60+minute-30 — produces inflated values because data is UTC.
+   Should convert to ET first. Consistently wrong everywhere so results
+   are internally consistent, but should be fixed. Only matters when
+   setup filter is ON (currently OFF).
+
+4. CONSIDER TRAINING NEW MODEL WITH CAP:
+   Current model was trained without notional cap in the labeling/sizing.
+   Training a model that knows about the cap might improve results.
+
+5. MULTI-YEAR BACKTEST:
+   Train on 2022-2023, test on 2024, or use rolling windows.
+
+================================================================================
+IMPORTANT CONSTANTS
+================================================================================
+
+CAPITAL_CAP = 1_000_000  (in master_pipeline.py)
+SLIPPAGE_PER_SHARE = 0.01
+SEC_FEE_RATE = 0.0000278
+MARGIN_RATE = 0.06
+COST_PER_SHARE = 0.005
+MIN_COMMISSION = 1.00
+62 features used by model (vol_pct_complete and session_phase have 0 importance)
+
+================================================================================
+END OF SUMMARY
+================================================================================

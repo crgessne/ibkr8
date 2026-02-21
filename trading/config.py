@@ -41,10 +41,19 @@ DEFAULT_SYMBOL    = "TSLA"
 DEFAULT_BAR_SIZE  = "5 mins"
 
 # ── Entry quality filters ────────────────────────────────────────────────────
-# Disabled: model is retrained with --slippage 0.18 so it learns to avoid
-# low-target-distance setups internally — no post-hoc filter needed.
+# The backtest trains on bars with min_rr=0.3 — a soft floor that
+# excludes degenerate setups (target ≈ entry) while letting the model see
+# a wide range of RR values.  The nn_pnl loss learns internally to assign
+# low probability to low-RR bars, so the model IS the primary RR filter.
+#
+# This live gate is a safety net matching the training floor.  Bars below 0.3
+# were never in the training data, so the model's output is undefined for them.
+#
+# Formula: vwap_width_atr = |close - VWAP| / ATR
+#          rr              = vwap_width_atr / stop_atr
 MIN_TARGET_DIST  = 0.0         # $/share minimum |entry - VWAP|  (0 = disabled)
-MIN_REWARD_RISK  = 0.0         # minimum R:R ratio               (0 = disabled)
+MIN_REWARD_RISK  = 0.3         # safety net matching backtest min_rr=0.3
+                               # model probability is the real filter above this floor
 
 # ── Bar-size string → ib_insync realtime bar size mapping ───────────────
 # ib_insync reqRealTimeBars only supports 5-second bars.

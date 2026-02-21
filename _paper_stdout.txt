@@ -1,0 +1,47 @@
+Loaded model from: models\rf_vwap_stop0.75_20260218_192628.pkl
+  - Model type: PnLModelWrapper
+  - Saved at: 2026-02-18T19:33:36.425657
+  - Stop ATR: 0.75
+  - Features: 62
+  Using model's stop_atr: 0.75
+
+========================================================================
+  IBKR TRADING ENGINE
+========================================================================
+  Mode:           PAPER
+  Symbol:         TSLA
+  Bar size:       1 min
+  Capital:        $1,000,000
+  Risk/trade:     1.0%  ($10,000)
+  Stop ATR:       0.75
+  Threshold:      0.5
+  Max concurrent: 1
+  Features:       62
+  Lookback:       200 bars
+  Port:           7497
+========================================================================
+  Connecting to IBKR (PAPER) at 127.0.0.1:7497 ...
+  [OK] Connected  (account: ['DU6178014'])
+  [OK] Contract qualified: Stock(conId=76792991, symbol='TSLA', exchange='SMART', primaryExchange='NASDAQ', currency='USD', localSymbol='TSLA', tradingClass='NMS')
+  Warming up indicators (200 bars of 1 min)...
+  [OK] Seeded 1088 historical bars
+  Subscribing to 1 min bars (keepUpToDate) for TSLA...
+
+  [OK] Engine running.  Ctrl+C to stop.
+
+
+  >> SIGNAL #1  SHORT 2431 TSLA @ ~$411.30  stop=$411.47  target=$411.17  prob=0.877  ticket=334856c252d6
+
+  >> SIGNAL #2  LONG 2432 TSLA @ ~$411.13  stop=$410.96  target=$411.15  prob=0.891  ticket=0ee841194e28
+
+  >> SIGNAL #3  LONG 2432 TSLA @ ~$411.07  stop=$410.92  target=$411.12  prob=0.571  ticket=d33b9c490e63
+
+  >> SIGNAL #4  LONG 2435 TSLA @ ~$410.62  stop=$410.45  target=$410.97  prob=0.505  ticket=7c8a69fa97da
+
+  >> SIGNAL #5  LONG 2433 TSLA @ ~$410.92  stop=$410.74  target=$410.96  prob=0.683  ticket=82a8e71bff2a
+
+  >> SIGNAL #6  LONG 2434 TSLA @ ~$410.70  stop=$410.51  target=$410.94  prob=0.587  ticket=c4910fd29a74
+
+  >> SIGNAL #7  LONG 2434 TSLA @ ~$410.70  stop=$410.56  target=$410.83  prob=0.851  ticket=94049375a94c
+
+  >> SIGNAL #8  SHORT 2433 TSLA @ ~$410.94  stop=$411.10  target=$410.81  prob=0.927  ticket=1ca9d461c726

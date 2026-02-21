@@ -1,0 +1,9 @@
+Loading...
+Loaded 40848 bars
+Setups: 407 LONG, 357 SHORT
+Running simulation...
+Trades: 764
+Win Rate: 41.5%
+Profit Factor: 1.01
+Avg PnL: $0.01
+Done

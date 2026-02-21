@@ -1,0 +1,329 @@
+
+================================================================================
+ MASTER PIPELINE: RF VWAP REVERSION ANALYSIS  [TSLA]
+================================================================================
+  Data file: data\tsla_5min_10years.csv
+  Train: 2023-2023 | Test: 2024-2024
+  Slippage: $0.180/share | Win def: label | P&L def: label_rr
+  [STREAMING] Using pre-computed indicators: data/tsla_5min_streaming_2023-01-01_2024-12-31.parquet
+
+================================================================================
+LOADING PRE-COMPUTED STREAMING INDICATORS
+================================================================================
+[OK] Loaded 38,976 bars with 143 columns from tsla_5min_streaming_2023-01-01_2024-12-31.parquet
+[OK] Date range: 2023-01-03 14:30:00+00:00 to 2024-12-31 20:55:00+00:00
+
+[OK] Using 62 features:
+   1. vwap_width_atr
+   2. price_to_vwap_atr
+   3. is_long_setup
+   4. vwap_stretch_zscore
+   5. vwap_slope
+   6. vwap_slope_5
+   7. vwap_helping
+   8. rel_vol
+   9. vol_ratio
+  10. vol_at_extension
+  11. rsi
+  12. rsi_slope
+  13. rsi_extreme
+  14. bar_range_atr
+  15. close_position
+  16. crossed_vwap
+  17. bars_from_vwap
+  18. hour
+  19. minute
+  20. minutes_into_session
+  21. session_phase
+  22. vol_pct_complete
+  23. vwap_crosses_today
+  24. day_range_atr
+  25. pct_of_day_range
+  26. vwap_in_day_range
+  27. momentum_3bar_atr
+  28. momentum_6bar_atr
+  29. bar_reverting
+  30. consecutive_same_side
+  31. open_vs_vwap_atr
+  32. prior_bar_toward_vwap
+  33. ema20_slope_atr
+  34. extension_speed
+  35. beyond_vwap_1sigma
+  36. beyond_vwap_2sigma
+  37. dist_to_nearest_vwap_band
+  38. dist_prior_high_atr
+  39. dist_prior_low_atr
+  40. dist_prior_close_atr
+  41. dist_prior_vwap_atr
+  42. dist_open_atr
+  43. swept_key_level
+  44. dist_or_high_atr
+  45. dist_or_low_atr
+  46. outside_or
+  47. dist_day_high_atr
+  48. dist_day_low_atr
+  49. at_session_extreme
+  50. dist_swing_high_atr
+  51. dist_swing_low_atr
+  52. nearest_swing_atr
+  53. dist_poc_atr
+  54. dist_vah_atr
+  55. dist_val_atr
+  56. outside_value_area
+  57. nearest_sr_atr
+  58. sr_levels_between
+  59. sr_location_score
+  60. sr_rejection_score
+  61. sr_trigger_score
+  62. reversal_quality
+
+================================================================================
+GENERATING LABELS
+================================================================================
+  Stop 0.25 ATR:  38,474 valid labels (14.49% win rate)
+  Stop 0.35 ATR:  38,474 valid labels (19.12% win rate)
+  Stop 0.40 ATR:  38,474 valid labels (21.21% win rate)
+  Stop 0.50 ATR:  38,474 valid labels (25.03% win rate)
+  Stop 0.60 ATR:  38,474 valid labels (28.26% win rate)
+  Stop 0.75 ATR:  38,474 valid labels (32.34% win rate)
+  Stop 1.00 ATR:  38,474 valid labels (37.22% win rate)
+  Stop 1.25 ATR:  38,474 valid labels (40.64% win rate)
+  Stop 1.50 ATR:  38,474 valid labels (43.22% win rate)
+
+================================================================================
+TRAINING RF MODELS & CALCULATING METRICS
+================================================================================
+
+
+--- Stop Width: 0.25 ATR ---
+  [NN_PNL] Stopped at epoch 16, best epoch 1, best val E[PnL]=$-37,772
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[4228-168168], after_notional_cap=[1268-7187]
+  [PROB] threshold=0.50, trades above=0, avg_shares=0, sizing=risk_1.0%
+  [OK] R:R = 6.23:1, Breakeven WR = 13.8%
+  [prob_0.50] Trades=0 WR(touch_vwap)=nan% NetP&L=$0 (+0.0%)
+  [STOP SUMMARY] stop_atr=0.25 sel=prob_0.50 n_exec=0 total_net_pnl=$0
+
+--- Stop Width: 0.35 ATR ---
+  [NN_PNL] Stopped at epoch 16, best epoch 1, best val E[PnL]=$-39,227
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[3020-120120], after_notional_cap=[906-7187]
+  [PROB] threshold=0.50, trades above=0, avg_shares=0, sizing=risk_1.0%
+  [OK] R:R = 4.45:1, Breakeven WR = 18.3%
+  [prob_0.50] Trades=0 WR(touch_vwap)=nan% NetP&L=$0 (+0.0%)
+  [STOP SUMMARY] stop_atr=0.35 sel=prob_0.50 n_exec=0 total_net_pnl=$0
+
+--- Stop Width: 0.4 ATR ---
+  [NN_PNL] Stopped at epoch 24, best epoch 9, best val E[PnL]=$-27,533
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[2642-105105], after_notional_cap=[793-7187]
+  [PROB] threshold=0.50, trades above=6148, avg_shares=4545, sizing=risk_1.0%
+  [OK] R:R = 3.90:1, Breakeven WR = 20.4%
+  [prob_0.50] Trades=6,148 WR(touch_vwap)=37.3% NetP&L=$-4,321,053 (-432.1%)
+    yearly: 2024: $-4,321,053 (2553t, 22%WR)
+  [STOP SUMMARY] stop_atr=0.40 sel=prob_0.50 n_exec=2,553 total_net_pnl=$-4,321,053
+
+--- Stop Width: 0.5 ATR ---
+  [NN_PNL] Stopped at epoch 21, best epoch 6, best val E[PnL]=$-27,691
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[2114-84084], after_notional_cap=[634-7155]
+  [PROB] threshold=0.50, trades above=7443, avg_shares=4469, sizing=risk_1.0%
+  [OK] R:R = 3.12:1, Breakeven WR = 24.3%
+  [prob_0.50] Trades=7,443 WR(touch_vwap)=43.1% NetP&L=$-4,551,508 (-455.2%)
+    yearly: 2024: $-4,551,508 (2725t, 23%WR)
+  [STOP SUMMARY] stop_atr=0.50 sel=prob_0.50 n_exec=2,725 total_net_pnl=$-4,551,508
+
+--- Stop Width: 0.6 ATR ---
+  [NN_PNL] Stopped at epoch 21, best epoch 6, best val E[PnL]=$-28,401
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[1761-70070], after_notional_cap=[528-7155]
+  [PROB] threshold=0.50, trades above=7926, avg_shares=4413, sizing=risk_1.0%
+  [OK] R:R = 2.60:1, Breakeven WR = 27.8%
+  [prob_0.50] Trades=7,926 WR(touch_vwap)=47.6% NetP&L=$-4,405,803 (-440.6%)
+    yearly: 2024: $-4,405,803 (2723t, 26%WR)
+  [STOP SUMMARY] stop_atr=0.60 sel=prob_0.50 n_exec=2,723 total_net_pnl=$-4,405,803
+
+--- Stop Width: 0.75 ATR ---
+  [NN_PNL] Stopped at epoch 19, best epoch 4, best val E[PnL]=$-27,857
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[1409-56056], after_notional_cap=[423-7155]
+  [PROB] threshold=0.50, trades above=7199, avg_shares=3950, sizing=risk_1.0%
+  [OK] R:R = 2.08:1, Breakeven WR = 32.5%
+  [prob_0.50] Trades=7,199 WR(touch_vwap)=55.9% NetP&L=$-3,443,307 (-344.3%)
+    yearly: 2024: $-3,443,307 (2433t, 30%WR)
+  [STOP SUMMARY] stop_atr=0.75 sel=prob_0.50 n_exec=2,433 total_net_pnl=$-3,443,307
+
+--- Stop Width: 1.0 ATR ---
+  [NN_PNL] Stopped at epoch 48, best epoch 33, best val E[PnL]=$-27,598
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[1057-42042], after_notional_cap=[317-7155]
+  [PROB] threshold=0.50, trades above=9560, avg_shares=4519, sizing=risk_1.0%
+  [OK] R:R = 1.56:1, Breakeven WR = 39.1%
+  [prob_0.50] Trades=9,560 WR(touch_vwap)=59.2% NetP&L=$-2,672,916 (-267.3%)
+    yearly: 2024: $-2,672,916 (2254t, 36%WR)
+  [STOP SUMMARY] stop_atr=1.00 sel=prob_0.50 n_exec=2,254 total_net_pnl=$-2,672,916
+
+--- Stop Width: 1.25 ATR ---
+  [NN_PNL] Stopped at epoch 48, best epoch 33, best val E[PnL]=$-25,204
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[845-33633], after_notional_cap=[254-7155]
+  [PROB] threshold=0.50, trades above=9688, avg_shares=4367, sizing=risk_1.0%
+  [OK] R:R = 1.25:1, Breakeven WR = 44.5%
+  [prob_0.50] Trades=9,688 WR(touch_vwap)=63.5% NetP&L=$-2,597,883 (-259.8%)
+    yearly: 2024: $-2,597,883 (2100t, 39%WR)
+  [STOP SUMMARY] stop_atr=1.25 sel=prob_0.50 n_exec=2,100 total_net_pnl=$-2,597,883
+
+--- Stop Width: 1.5 ATR ---
+  [NN_PNL] Stopped at epoch 31, best epoch 16, best val E[PnL]=$-26,916
+  [OK] Trained(classifier): 19,178 train, 19,296 test samples
+  [PROB-RISK] threshold=0.50, risk_pct=1.0%, risk_$/trade=$10,000, scale=[30%-100%], max_concurrent=1, capital=$1,000,000 (dynamic tracking), full_shares_range=[704-28028], after_notional_cap=[211-7155]
+  [PROB] threshold=0.50, trades above=10131, avg_shares=4205, sizing=risk_1.0%
+  [OK] R:R = 1.04:1, Breakeven WR = 49.1%
+  [prob_0.50] Trades=10,131 WR(touch_vwap)=65.7% NetP&L=$-2,145,176 (-214.5%)
+    yearly: 2024: $-2,145,176 (1957t, 41%WR)
+  [STOP SUMMARY] stop_atr=1.50 sel=prob_0.50 n_exec=1,957 total_net_pnl=$-2,145,176
+
+======================================================================
+FEATURE IMPORTANCE RANKINGS (avg across all stops)
+======================================================================
+   1. pct_of_day_range             892.6543  ##################################################
+   2. is_long_setup                725.1326  ##################################################
+   3. beyond_vwap_1sigma           701.3020  ##################################################
+   4. vwap_width_atr               598.9546  ##################################################
+   5. beyond_vwap_2sigma           488.5890  ##################################################
+   6. vwap_stretch_zscore          417.3419  ##################################################
+   7. sr_levels_between            189.7588  ##################################################
+   8. hour                         158.9143  ##################################################
+   9. ema20_slope_atr              126.5845  ##################################################
+  10. price_to_vwap_atr            99.1515  ##################################################
+  11. dist_swing_high_atr          97.6935  ##################################################
+  12. nearest_swing_atr            86.9174  ##################################################
+  13. crossed_vwap                 80.2023  ##################################################
+  14. dist_day_high_atr            50.4437  ##################################################
+  15. momentum_3bar_atr            39.2457  ##################################################
+  16. dist_prior_close_atr         33.0072  ##################################################
+  17. dist_or_low_atr              31.6498  ##################################################
+  18. nearest_sr_atr               28.7718  ##################################################
+  19. vol_ratio                    26.9491  ##################################################
+  20. momentum_6bar_atr            20.3651  ##################################################
+  21. vwap_slope                   17.2489  ##################################################
+  22. dist_or_high_atr             9.3024  ##################################################
+  23. reversal_quality             7.3128  ##################################################
+  24. dist_open_atr                5.3274  ##################################################
+  25. close_position               4.4021  ##################################################
+  26. consecutive_same_side        3.4887  ##################################################
+  27. bars_from_vwap               3.2871  ##################################################
+  28. bar_reverting                2.9182  ##################################################
+  29. vwap_in_day_range            2.6070  ##################################################
+  30. rsi_slope                    0.5856  ##################################################
+  31. session_phase                0.0000  
+  32. vol_pct_complete             0.0000  
+  33. minute                       -0.1936  
+  34. vwap_helping                 -0.1987  
+  35. minutes_into_session         -0.8812  
+  36. rsi                          -1.2922  
+  37. day_range_atr                -2.1545  
+  38. dist_prior_vwap_atr          -3.1804  
+  39. sr_location_score            -3.9445  
+  40. sr_rejection_score           -6.2657  
+  41. open_vs_vwap_atr             -11.1077  
+  42. at_session_extreme           -12.5192  
+  43. outside_or                   -14.5184  
+  44. vol_at_extension             -15.4372  
+  45. vwap_slope_5                 -15.5228  
+  46. prior_bar_toward_vwap        -18.0495  
+  47. dist_day_low_atr             -19.5819  
+  48. dist_prior_high_atr          -25.5139  
+  49. dist_prior_low_atr           -26.2460  
+  50. rsi_extreme                  -26.7801  
+  51. vwap_crosses_today           -29.5808  
+  52. dist_swing_low_atr           -31.1538  
+  53. sr_trigger_score             -47.8720  
+  54. dist_vah_atr                 -52.1353  
+  55. dist_to_nearest_vwap_band    -72.7534  
+  56. swept_key_level              -111.6082  
+  57. bar_range_atr                -130.3431  
+  58. rel_vol                      -157.5523  
+  59. dist_poc_atr                 -177.5241  
+  60. outside_value_area           -195.4958  
+  61. extension_speed              -214.5561  
+  62. dist_val_atr                 -323.8756  
+
+========================================================================================================================
+RF MODEL VALUE-ADD (base WR vs RF-selected WR)
+========================================================================================================================
+   stop   all_tr   sel_tr   lift_tr   n_tr   all_te   sel_te   lift_te   n_te   f1_tr   f1_te  auc_tr  auc_te
+  -----  -------  -------  --------  -----  -------  -------  --------  -----  ------  ------  ------  ------
+   0.25    14.2%     nan%     nan%      0    14.8%     nan%     nan%      0  0.000  0.000  0.534  0.517
+   0.35    18.9%     nan%     nan%      0    19.4%     nan%     nan%      0  0.000  0.000  0.643  0.615
+   0.40    21.0%    38.1%  +  17.1%   6128    21.4%    37.3%  +  15.9%   2553  0.460  0.446  0.745  0.712
+   0.50    24.9%    44.7%  +  19.8%   7445    25.2%    43.1%  +  17.9%   2725  0.545  0.521  0.767  0.736
+   0.60    28.1%    49.9%  +  21.9%   7918    28.5%    47.6%  +  19.1%   2723  0.595  0.562  0.784  0.749
+   0.75    32.0%    56.3%  +  24.3%   7592    32.7%    55.9%  +  23.3%   2433  0.622  0.597  0.791  0.762
+   1.00    36.8%    61.8%  +  24.9%   9723    37.6%    59.2%  +  21.6%   2254  0.715  0.673  0.838  0.796
+   1.25    40.4%    67.8%  +  27.4%   9807    40.9%    63.5%  +  22.6%   2100  0.758  0.700  0.855  0.805
+   1.50    42.9%    70.8%  +  27.9%  10095    43.5%    65.7%  +  22.2%   1957  0.780  0.718  0.865  0.811
+
+======================================================================
+TOTAL P&L ON TEST YEARS (2024-2024)
+======================================================================
+  stop=0.25  trades=    0  WR=   n/a  P&L=$         0  avg=$       0/trade
+  stop=0.35  trades=    0  WR=   n/a  P&L=$         0  avg=$       0/trade
+  stop=0.40  trades=2,553  WR= 37.3%  P&L=$-4,321,053  avg=$  -1,693/trade
+  stop=0.50  trades=2,725  WR= 43.1%  P&L=$-4,551,508  avg=$  -1,670/trade
+  stop=0.60  trades=2,723  WR= 47.6%  P&L=$-4,405,803  avg=$  -1,618/trade
+  stop=0.75  trades=2,433  WR= 55.9%  P&L=$-3,443,307  avg=$  -1,415/trade
+  stop=1.00  trades=2,254  WR= 59.2%  P&L=$-2,672,916  avg=$  -1,186/trade
+  stop=1.25  trades=2,100  WR= 63.5%  P&L=$-2,597,883  avg=$  -1,237/trade
+  stop=1.50  trades=1,957  WR= 65.7%  P&L=$-2,145,176  avg=$  -1,096/trade
+  ------------------------------------------------------------
+  BEST STOP: 0.25 ATR -> $0
+  GRAND TOTAL (all stops): $-24,137,646
+
+[OK] Wrote results: data\master_pipeline_results_20260220_104514.csv
+[OK] Wrote summary: data\master_pipeline_summary_TSLA_20260220_104514.md
+Saved model to: models\rf_vwap_stop0.25_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 0.25
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop0.25_20260220_104514.json
+Saved model to: models\rf_vwap_stop0.35_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 0.35
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop0.35_20260220_104514.json
+Saved model to: models\rf_vwap_stop0.4_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 0.4
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop0.4_20260220_104514.json
+Saved model to: models\rf_vwap_stop0.5_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 0.5
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop0.5_20260220_104514.json
+Saved model to: models\rf_vwap_stop0.6_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 0.6
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop0.6_20260220_104514.json
+Saved model to: models\rf_vwap_stop0.75_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 0.75
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop0.75_20260220_104514.json
+Saved model to: models\rf_vwap_stop1.0_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 1.0
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop1.0_20260220_104514.json
+Saved model to: models\rf_vwap_stop1.25_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 1.25
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop1.25_20260220_104514.json
+Saved model to: models\rf_vwap_stop1.5_20260220_104514.pkl
+  - Model type: PnLModelWrapper
+  - Stop ATR: 1.5
+  - Features: 62
+Saved metadata to: models\rf_vwap_stop1.5_20260220_104514.json

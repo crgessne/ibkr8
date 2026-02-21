@@ -1,0 +1,121 @@
+
+================================================================================
+ MASTER PIPELINE: RF VWAP REVERSION ANALYSIS  [TSLA]
+================================================================================
+  Data file: data\tsla_5min_10years.csv
+  Train: <2024 | Test: 2024+
+  Slippage: $0.010/share | Win def: label | P&L def: label_rr
+
+================================================================================
+LOADING DATA
+================================================================================
+[OK] Loaded 197,419 bars
+[OK] Date range: 2015-12-29 14:30:00+00:00 to 2026-02-06 15:05:00+00:00
+[OK] Data span: 3692 days
+[OK] Dataset exceeds 100K bars requirement
+
+================================================================================
+CALCULATING INDICATORS
+================================================================================
+Calculating ATR...
+Calculating VWAP...
+Calculating VWAP distance metrics...
+Calculating VWAP dynamics...
+Calculating volume metrics...
+Calculating momentum indicators...
+Calculating bar context...
+Calculating enhanced features (time/session/trend)...
+Calculating reversal-specific features...
+Calculating support/resistance distances...
+Calculating R:R metrics...
+[OK] Calculated 102 features
+
+[OK] Using 41 features:
+   1. vwap_width_atr
+   2. price_to_vwap_atr
+   3. is_long_setup
+   4. vwap_stretch_zscore
+   5. vwap_slope
+   6. vwap_slope_5
+   7. vwap_helping
+   8. rel_vol
+   9. vol_ratio
+  10. vol_at_extension
+  11. rsi
+  12. rsi_slope
+  13. rsi_extreme
+  14. bar_range_atr
+  15. close_position
+  16. crossed_vwap
+  17. bars_from_vwap
+  18. hour
+  19. minute
+  20. minutes_into_session
+  21. session_phase
+  22. vol_pct_complete
+  23. vwap_crosses_today
+  24. day_range_atr
+  25. pct_of_day_range
+  26. vwap_in_day_range
+  27. momentum_3bar_atr
+  28. momentum_6bar_atr
+  29. bar_reverting
+  30. consecutive_same_side
+  31. open_vs_vwap_atr
+  32. prior_bar_toward_vwap
+  33. ema20_slope_atr
+  34. extension_speed
+  35. dist_prior_high_atr
+  36. dist_prior_low_atr
+  37. dist_open_atr
+  38. dist_day_high_atr
+  39. dist_day_low_atr
+  40. nearest_sr_atr
+  41. sr_levels_between
+
+================================================================================
+GENERATING LABELS
+================================================================================
+  Stop 0.25 ATR: 194,858 valid labels (15.79% win rate)
+  Stop 0.35 ATR: 194,858 valid labels (20.62% win rate)
+  Stop 0.40 ATR: 194,858 valid labels (22.74% win rate)
+  Stop 0.50 ATR: 194,858 valid labels (26.56% win rate)
+  Stop 0.60 ATR: 194,858 valid labels (29.83% win rate)
+  Stop 0.75 ATR: 194,858 valid labels (33.78% win rate)
+  Stop 1.00 ATR: 194,858 valid labels (38.83% win rate)
+  Stop 1.25 ATR: 194,858 valid labels (42.46% win rate)
+  Stop 1.50 ATR: 194,858 valid labels (45.06% win rate)
+
+================================================================================
+TRAINING RF MODELS & CALCULATING METRICS
+================================================================================
+
+
+--- Stop Width: 0.25 ATR ---
+  [OK] Trained(classifier): 154,565 train, 40,293 test samples
+  [PROB] threshold=0.50, trades above=18681, shares=[100..500], avg_shares=206
+  [OK] R:R = 6.05:1, Breakeven WR = 14.2%
+  [prob_0.50] Trades=18,681 WR(touch_vwap)=24.6% NetP&L=$-185,816 (-18.6%)
+    yearly: 2024: $-75,610 (3932t, 23%WR) | 2025: $-105,049 (3975t, 24%WR) | 2026: $-5,157 (339t, 25%WR)
+  [STOP SUMMARY] stop_atr=0.25 sel=prob_0.50 n_exec=8,246 total_net_pnl=$-185,816
+
+--- Stop Width: 0.35 ATR ---
+  [OK] Trained(classifier): 154,565 train, 40,293 test samples
+  [PROB] threshold=0.50, trades above=18969, shares=[100..500], avg_shares=214
+  [OK] R:R = 4.32:1, Breakeven WR = 18.8%
+  [prob_0.50] Trades=18,969 WR(touch_vwap)=32.3% NetP&L=$-193,361 (-19.3%)
+    yearly: 2024: $-79,689 (3727t, 30%WR) | 2025: $-107,627 (3790t, 32%WR) | 2026: $-6,045 (325t, 33%WR)
+  [STOP SUMMARY] stop_atr=0.35 sel=prob_0.50 n_exec=7,842 total_net_pnl=$-193,361
+
+--- Stop Width: 0.4 ATR ---
+  [OK] Trained(classifier): 154,565 train, 40,293 test samples
+  [PROB] threshold=0.50, trades above=19120, shares=[100..500], avg_shares=217
+  [OK] R:R = 3.78:1, Breakeven WR = 20.9%
+  [prob_0.50] Trades=19,120 WR(touch_vwap)=35.6% NetP&L=$-199,838 (-20.0%)
+    yearly: 2024: $-85,755 (3614t, 33%WR) | 2025: $-106,863 (3639t, 35%WR) | 2026: $-7,221 (320t, 36%WR)
+  [STOP SUMMARY] stop_atr=0.40 sel=prob_0.50 n_exec=7,573 total_net_pnl=$-199,838
+
+--- Stop Width: 0.5 ATR ---
+  [OK] Trained(classifier): 154,565 train, 40,293 test samples
+  [PROB] threshold=0.50, trades above=19331, shares=[100..500], avg_shares=223
+  [OK] R:R = 3.02:1, Breakeven WR = 24.9%

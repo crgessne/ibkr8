@@ -37,6 +37,7 @@ from trading.config import (
     DEFAULT_STOP_ATR,
     DEFAULT_SYMBOL,
     MAX_CONCURRENT,
+    MIN_REWARD_RISK,
     PROB_SCALE_MIN,
     PROB_THRESHOLD,
     RISK_PER_TRADE,
@@ -96,6 +97,10 @@ Examples:
                    help=f"Minimum probability scaling fraction (default: {PROB_SCALE_MIN})")
     p.add_argument("--max-concurrent", type=int, default=MAX_CONCURRENT,
                    help=f"Max simultaneous positions (default: {MAX_CONCURRENT})")
+    p.add_argument("--min-rr", type=float, default=MIN_REWARD_RISK,
+                   help=f"Minimum reward:risk ratio — skips trades where "
+                        f"|entry-VWAP| / (stop_atr * ATR) < this value. "
+                        f"Matches backtest min_rr. (default: {MIN_REWARD_RISK})")
 
     # ── Connection ─────────────────────────────────────────────────
     p.add_argument("--host", type=str, default=DEFAULT_HOST,
@@ -185,6 +190,7 @@ def main() -> None:
         host=args.host,
         client_id=args.client_id,
         lookback=args.lookback,
+        min_rr=args.min_rr,
     )
 
     engine.start()

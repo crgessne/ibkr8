@@ -1,0 +1,190 @@
+
+================================================================================
+ MASTER PIPELINE: RF VWAP REVERSION ANALYSIS
+================================================================================
+  Slippage: $0.010/share | Win def: label | P&L def: label_rr
+  [SETUP FILTER] min_dist=0.5 ATR | min_mins=15 | max_mins=360 | min_rr_setup=1.0
+  [STREAM] Writing incremental results to: data\master_pipeline_progress_20260213_161159.csv
+
+================================================================================
+LOADING DATA
+================================================================================
+[OK] Loaded 197,419 bars
+[OK] Date range: 2015-12-29 14:30:00+00:00 to 2026-02-06 15:05:00+00:00
+[OK] Data span: 3692 days
+[OK] Dataset exceeds 100K bars requirement
+
+================================================================================
+CALCULATING INDICATORS
+================================================================================
+Calculating ATR...
+Calculating VWAP...
+Calculating VWAP distance metrics...
+Calculating VWAP dynamics...
+Calculating volume metrics...
+Calculating momentum indicators...
+Calculating bar context...
+Calculating enhanced features (time/session/trend)...
+Calculating reversal-specific features...
+Calculating R:R metrics...
+[OK] Calculated 95 features
+
+[OK] Using 34 features:
+   1. vwap_width_atr
+   2. price_to_vwap_atr
+   3. is_long_setup
+   4. vwap_stretch_zscore
+   5. vwap_slope
+   6. vwap_slope_5
+   7. vwap_helping
+   8. rel_vol
+   9. vol_ratio
+  10. vol_at_extension
+  11. rsi
+  12. rsi_slope
+  13. rsi_extreme
+  14. bar_range_atr
+  15. close_position
+  16. crossed_vwap
+  17. bars_from_vwap
+  18. hour
+  19. minute
+  20. minutes_into_session
+  21. session_phase
+  22. vol_pct_complete
+  23. vwap_crosses_today
+  24. day_range_atr
+  25. pct_of_day_range
+  26. vwap_in_day_range
+  27. momentum_3bar_atr
+  28. momentum_6bar_atr
+  29. bar_reverting
+  30. consecutive_same_side
+  31. open_vs_vwap_atr
+  32. prior_bar_toward_vwap
+  33. ema20_slope_atr
+  34. extension_speed
+
+================================================================================
+GENERATING LABELS
+================================================================================
+  Stop 0.25 ATR: 194,858 valid labels (15.79% win rate)
+  Stop 0.35 ATR: 194,858 valid labels (20.62% win rate)
+  Stop 0.40 ATR: 194,858 valid labels (22.74% win rate)
+  Stop 0.50 ATR: 194,858 valid labels (26.56% win rate)
+  Stop 0.60 ATR: 194,858 valid labels (29.83% win rate)
+  Stop 0.75 ATR: 194,858 valid labels (33.78% win rate)
+  Stop 1.00 ATR: 194,858 valid labels (38.83% win rate)
+  Stop 1.25 ATR: 194,858 valid labels (42.46% win rate)
+  Stop 1.50 ATR: 194,858 valid labels (45.06% win rate)
+
+================================================================================
+TRAINING RF MODELS & CALCULATING METRICS
+================================================================================
+
+
+--- Stop Width: 0.25 ATR ---
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 29,007 train, 7,443 test samples
+  [OK] (regressor) Headline R:R = 6.05:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=14.0% NetP&L=$3,033 (+0.3%)
+  [STOP SUMMARY] stop_atr=0.25 sel=top_500 n_exec=289 total_net_pnl=$3,033
+
+--- Stop Width: 0.35 ATR ---
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 29,007 train, 7,443 test samples
+  [OK] (regressor) Headline R:R = 4.32:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=17.8% NetP&L=$-842 (-0.1%)
+  [STOP SUMMARY] stop_atr=0.35 sel=top_500 n_exec=275 total_net_pnl=$-842
+
+--- Stop Width: 0.4 ATR ---
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 29,007 train, 7,443 test samples
+  [OK] (regressor) Headline R:R = 3.78:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=20.4% NetP&L=$-2,195 (-0.2%)
+  [STOP SUMMARY] stop_atr=0.40 sel=top_500 n_exec=272 total_net_pnl=$-2,195
+
+--- Stop Width: 0.5 ATR ---
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 29,007 train, 7,443 test samples
+  [OK] (regressor) Headline R:R = 3.02:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=25.0% NetP&L=$1,825 (+0.2%)
+  [STOP SUMMARY] stop_atr=0.50 sel=top_500 n_exec=236 total_net_pnl=$1,825
+
+--- Stop Width: 0.6 ATR ---
+  [SETUP] 194,858 -> 33,287 bars (17.1% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 26,502 train, 6,785 test samples
+  [OK] (regressor) Headline R:R = 2.52:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=28.2% NetP&L=$397 (+0.0%)
+  [STOP SUMMARY] stop_atr=0.60 sel=top_500 n_exec=208 total_net_pnl=$397
+
+--- Stop Width: 0.75 ATR ---
+  [SETUP] 194,858 -> 28,824 bars (14.8% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 22,938 train, 5,886 test samples
+  [OK] (regressor) Headline R:R = 2.02:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=34.8% NetP&L=$3,405 (+0.3%)
+  [STOP SUMMARY] stop_atr=0.75 sel=top_500 n_exec=187 total_net_pnl=$3,405
+
+--- Stop Width: 1.0 ATR ---
+  [SETUP] 194,858 -> 22,006 bars (11.3% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 17,551 train, 4,455 test samples
+  [OK] (regressor) Headline R:R = 1.51:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=39.8% NetP&L=$5,795 (+0.6%)
+  [STOP SUMMARY] stop_atr=1.00 sel=top_500 n_exec=198 total_net_pnl=$5,795
+
+--- Stop Width: 1.25 ATR ---
+  [SETUP] 194,858 -> 16,418 bars (8.4% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 13,137 train, 3,281 test samples
+  [OK] (regressor) Headline R:R = 1.21:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=37.0% NetP&L=$-2,031 (-0.2%)
+  [STOP SUMMARY] stop_atr=1.25 sel=top_500 n_exec=205 total_net_pnl=$-2,031
+
+--- Stop Width: 1.5 ATR ---
+  [SETUP] 194,858 -> 11,783 bars (6.0% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+  [OK] Trained(regressor): 9,421 train, 2,362 test samples
+  [OK] (regressor) Headline R:R = 1.01:1
+  [MAX-PNL top_500] Trades=500 WR(touch_vwap)=39.0% NetP&L=$3,413 (+0.3%)
+  [STOP SUMMARY] stop_atr=1.50 sel=top_500 n_exec=243 total_net_pnl=$3,413
+
+======================================================================
+FEATURE IMPORTANCE RANKINGS (avg across all stops)
+======================================================================
+   1. vwap_slope_5                 0.1632  ################################################
+   2. vwap_slope                   0.1595  ###############################################
+   3. vol_pct_complete             0.0934  ############################
+   4. day_range_atr                0.0412  ############
+   5. price_to_vwap_atr            0.0381  ###########
+   6. vwap_stretch_zscore          0.0366  ##########
+   7. open_vs_vwap_atr             0.0349  ##########
+   8. vwap_width_atr               0.0341  ##########
+   9. bar_range_atr                0.0315  #########
+  10. rel_vol                      0.0305  #########
+  11. close_position               0.0292  ########
+  12. vol_at_extension             0.0290  ########
+  13. ema20_slope_atr              0.0273  ########
+  14. pct_of_day_range             0.0261  #######
+  15. vol_ratio                    0.0251  #######
+  16. rsi                          0.0243  #######
+  17. momentum_6bar_atr            0.0220  ######
+  18. vwap_in_day_range            0.0214  ######
+  19. extension_speed              0.0208  ######
+  20. momentum_3bar_atr            0.0187  #####
+  21. minutes_into_session         0.0167  #####
+  22. consecutive_same_side        0.0149  ####
+  23. rsi_slope                    0.0147  ####
+  24. bars_from_vwap               0.0146  ####
+  25. vwap_crosses_today           0.0114  ###
+  26. minute                       0.0069  ##
+  27. hour                         0.0046  #
+  28. is_long_setup                0.0038  #
+  29. rsi_extreme                  0.0020  
+  30. session_phase                0.0015  
+  31. prior_bar_toward_vwap        0.0008  
+  32. bar_reverting                0.0007  
+  33. crossed_vwap                 0.0002  
+  34. vwap_helping                 0.0001  
+
+======================================================================
+RF MODEL VALUE-ADD (base WR vs RF-selected WR)
+======================================================================
+   stop  base_tr    rf_tr  lift_tr   n_tr  base_te    rf_te  lift_te   n_te

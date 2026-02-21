@@ -1,0 +1,57 @@
+Loading data...
+
+================================================================================
+LOADING DATA
+================================================================================
+[OK] Loaded 197,419 bars
+[OK] Date range: 2015-12-29 14:30:00+00:00 to 2026-02-06 15:05:00+00:00
+[OK] Data span: 3692 days
+[OK] Dataset exceeds 100K bars requirement
+
+========================================================================================================================
+  ORACLE ANALYSIS: Setup-Filtered Test Set (>= 2024)
+  Costs/trade: $3.00 | Shares: 100
+========================================================================================================================
+   Stop    Bars  OracleWR  BlindWR    OracleNet     BlindNet     RF500Net   BlindAvg   RF500Avg    RFLift$  RF/Blind
+  -----  ------  --------  -------  -----------  -----------  -----------  ---------  ---------  ---------  --------
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   0.25   7,443     16.3%    16.3%  $   249,759  $   -57,910  $    -3,582  $    -7.8  $    -7.2  $     309     0.92x
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   0.35   7,443     20.9%    20.9%  $   318,226  $   -81,215  $    -7,068  $   -10.9  $   -14.1  $  -1,612     1.30x
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   0.40   7,443     23.0%    23.0%  $   349,525  $   -93,121  $    -8,448  $   -12.5  $   -16.9  $  -2,192     1.35x
+  [SETUP] 194,858 -> 36,450 bars (18.7% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   0.50   7,443     27.3%    27.3%  $   416,418  $  -101,684  $    -2,294  $   -13.7  $    -4.6  $   4,536     0.34x
+  [SETUP] 194,858 -> 33,287 bars (17.1% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   0.60   6,785     29.6%    29.6%  $   443,169  $  -100,860  $      -529  $   -14.9  $    -1.1  $   6,904     0.07x
+  [SETUP] 194,858 -> 28,824 bars (14.8% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   0.75   5,886     31.9%    31.9%  $   457,485  $  -105,032  $     1,137  $   -17.8  $     2.3  $  10,059    -0.13x
+  [SETUP] 194,858 -> 22,006 bars (11.3% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   1.00   4,455     34.2%    34.2%  $   430,212  $  -106,760  $       651  $   -24.0  $     1.3  $  12,633    -0.05x
+  [SETUP] 194,858 -> 16,418 bars (8.4% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   1.25   3,281     34.2%    34.2%  $   357,471  $  -126,752  $    -1,606  $   -38.6  $    -3.2  $  17,711     0.08x
+  [SETUP] 194,858 -> 11,783 bars (6.0% kept) | min_dist=0.5 min_mins=15 max_mins=360 min_rr=1.0
+   1.50   2,362     33.4%    33.4%  $   281,456  $  -129,373  $   -14,537  $   -54.8  $   -29.1  $  12,850     0.53x
+
+Legend:
+  OracleWR  = win rate on setup-filtered bars (same as BlindWR — it's the base rate)
+  OracleNet = net P&L if you ONLY took winning trades (perfect foresight, still pay costs)
+  BlindNet  = net P&L taking EVERY setup-filtered bar (no model)
+  RF500Net  = net P&L from RF regressor selecting top-500 predicted payoff
+  RFLift$   = RF500Net minus (BlindAvg * 500) — value added by RF selection
+  RF/Blind  = ratio of RF avg/trade to Blind avg/trade — >1 means RF helps
+
+================================================================================
+  BLIND BASELINE (no RF, take every setup bar)
+================================================================================
+   Stop    Bars      WR    AvgWin$   AvgLoss$       NetPnL   Avg/Trade
+  -----  ------  ------  ---------  ---------  -----------  ----------
+   0.25   7,443   16.3%  $     206  $     -49  $   -57,910  $     -7.8
+   0.35   7,443   20.9%  $     204  $     -68  $   -81,215  $    -10.9
+   0.40   7,443   23.0%  $     204  $     -77  $   -93,121  $    -12.5
+   0.50   7,443   27.3%  $     205  $     -96  $  -101,684  $    -13.7
+   0.60   6,785   29.6%  $     221  $    -114  $  -100,860  $    -14.9
+   0.75   5,886   31.9%  $     243  $    -140  $  -105,032  $    -17.8
+   1.00   4,455   34.2%  $     282  $    -183  $  -106,760  $    -24.0
+   1.25   3,281   34.2%  $     319  $    -224  $  -126,752  $    -38.6
+   1.50   2,362   33.4%  $     357  $    -261  $  -129,373  $    -54.8

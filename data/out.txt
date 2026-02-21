@@ -1,0 +1,11 @@
+Starting...
+Imports done
+============================================================
+UPDATED DEFAULTS (1.5 ATR Stop)
+============================================================
+Total Trades: 133
+Win Rate: 48.1%
+Profit Factor: 1.32
+Avg P&L: $0.41
+Long: 71 trades, 50.7% win rate
+Short: 62 trades, 45.2% win rate

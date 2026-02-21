@@ -1,0 +1,5 @@
+['entry_bar_index', 'exit_bar_index', 'entry_datetime', 'exit_datetime', 'is_long', 'entry_price', 'exit_price', 'exit_reason', 'gross_pnl', 'net_pnl', 'costs', 'margin_cost', 'margin_borrowed', 'notional', 'hold_hours', 'shares', 'risk_dollars', 'vwap_dist_atr', 'per_trade_rr']
+(2515, 19)
+   entry_bar_index  exit_bar_index             entry_datetime              exit_datetime  is_long  entry_price  exit_price exit_reason    gross_pnl      net_pnl   costs  margin_cost  margin_borrowed   notional  hold_hours  shares  risk_dollars  vwap_dist_atr  per_trade_rr
+0            19429           19430  2024-01-02 14:35:00+00:00  2024-01-02 14:40:00+00:00        1       246.42  245.554821        stop -3510.894643 -3632.634643  121.74          0.0              0.0  999972.36    0.083333    4058   3510.894643       0.289507      0.386010
+1            19431           19432  2024-01-02 14:45:00+00:00  2024-01-02 14:50:00+00:00        1       245.93  246.391842        vwap  1877.849428  1755.869428  121.98          0.0              0.0  999951.38    0.083333    4066   3994.845000       0.352551      0.470068

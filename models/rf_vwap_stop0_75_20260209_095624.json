@@ -1,0 +1,103 @@
+{
+  "stop_atr": 0.75,
+  "features": [
+    "wap",
+    "bar_count",
+    "vwap_width_atr",
+    "price_to_vwap_atr",
+    "is_long_setup",
+    "vwap_slope",
+    "vwap_slope_5",
+    "vwap_helping",
+    "rel_vol",
+    "vol_ratio",
+    "vol_at_extension",
+    "rsi",
+    "rsi_slope",
+    "rsi_extreme",
+    "bar_range_atr",
+    "close_position",
+    "crossed_vwap",
+    "bars_from_vwap"
+  ],
+  "rr": 2.0156994368679677,
+  "rf_params": {
+    "n_estimators": 100,
+    "max_depth": 6,
+    "min_samples_leaf": 50,
+    "min_samples_split": 100,
+    "max_features": "sqrt",
+    "random_state": 42,
+    "n_jobs": -1,
+    "class_weight": "balanced"
+  },
+  "train_stats": {
+    "n_samples": 154565,
+    "date_range": [
+      "2015-12-29 15:35:00+00:00",
+      "2023-12-29 20:50:00+00:00"
+    ],
+    "win_rate": 0.33803254294309837
+  },
+  "test_stats": {
+    "n_samples": 40293,
+    "date_range": [
+      "2024-01-02 14:30:00+00:00",
+      "2026-02-06 15:00:00+00:00"
+    ],
+    "win_rate": 0.3367582458491549,
+    "rf_threshold_0.5": {
+      "n_trades": 18472,
+      "win_rate": 0.5399523603291468,
+      "ev": 0.6283340289801381,
+      "total_net_pnl": 1326815.4671192998,
+      "avg_net_pnl_per_trade": 71.82846833690449
+    }
+  },
+  "feature_importance_top10": [
+    {
+      "feature": "vwap_width_atr",
+      "importance": 0.5184978393795535
+    },
+    {
+      "feature": "price_to_vwap_atr",
+      "importance": 0.19994366814707287
+    },
+    {
+      "feature": "bars_from_vwap",
+      "importance": 0.17035816326368564
+    },
+    {
+      "feature": "crossed_vwap",
+      "importance": 0.023912198311716808
+    },
+    {
+      "feature": "vwap_slope",
+      "importance": 0.015415734089948152
+    },
+    {
+      "feature": "rel_vol",
+      "importance": 0.015075583527558462
+    },
+    {
+      "feature": "vwap_helping",
+      "importance": 0.0136559107608359
+    },
+    {
+      "feature": "vwap_slope_5",
+      "importance": 0.010838270256570639
+    },
+    {
+      "feature": "rsi",
+      "importance": 0.006045095848466506
+    },
+    {
+      "feature": "bar_range_atr",
+      "importance": 0.005753371470428564
+    }
+  ],
+  "breakeven_wr": 0.33159803254086084,
+  "timestamp": "20260209_095624",
+  "saved_at": "2026-02-09T09:56:24.320524",
+  "model_type": "RandomForestClassifier"
+}

@@ -1,0 +1,333 @@
+================================================================================
+ROOT CAUSE DIAGNOSIS: WHY IS EVERY CONFIG NEGATIVE P&L?
+================================================================================
+
+================================================================================
+STOP = 0.25 ATR | 2514 trades | net=$-22,711 | file=data\trades_realized_y2024_stop0.25_seltop_5000_kregressor_20260212_094444.csv
+================================================================================
+
+  EXIT REASON BREAKDOWN:
+    stop :  2127 ( 84.6%)  avg=$     -53  total=$   -112942
+    vwap :   381 ( 15.2%)  avg=$     233  total=$     88793
+    eod  :     6 (  0.2%)  avg=$     240  total=$      1438
+
+  P&L SUMMARY:
+    Total gross: $-15,169
+    Total costs: $7,542
+    Total net:   $-22,711
+    Avg net/trade: $-9.03
+    Win rate: 15.4% (387 W / 2127 L)
+    Avg win:  $233.16
+    Avg loss: $-53.10
+    Win/Loss ratio: 4.39
+
+  EV DECOMPOSITION:
+    WR(vwap)=15.2%, avg_win=$233, avg_loss=$53
+    EV/trade = 0.152*233 - 0.848*53 = $-9.73
+    Breakeven WR needed: 18.6%
+    SHORTFALL: actual WR 15.2% vs needed 18.6% = -3.4% gap
+
+  R:R DISTRIBUTION AT ENTRY:
+    Mean:   6.306
+    Median: 5.745
+    RR < 0.25: 0.0%
+    RR < 0.5: 0.0%
+    RR < 1.0: 0.1%
+    RR < 2.0: 6.0%
+    RR < 3.0: 17.5%
+
+  WIN RATE BY R:R BUCKET:
+    RR [1.0,2.0): n=  148 WR= 32.4% avg=$    -15 total=$     -2162 vwap%=32%
+    RR [2.0,3.0): n=  291 WR= 27.5% avg=$     -2 total=$      -716 vwap%=27%
+    RR [3.0,5.0): n=  606 WR= 18.5% avg=$     -6 total=$     -3668 vwap%=18%
+    RR [5.0,100.0): n= 1467 WR= 10.0% avg=$    -11 total=$    -16182 vwap%=10%
+
+  VWAP TOUCH BUT NET<=0 (reward < costs): 0 / 381 (0.0%)
+
+  TRADES PER DAY:
+    Mean: 5.0, Median: 4, Max: 17
+
+  TRADE DURATION (bars):
+    Mean: 2.6, Median: 1
+    1-bar: 1613 (64.2%)
+
+  DIRECTION:
+    LONG: n= 1054 net=$     -7577 WR=16.8%
+    SHORT: n= 1460 net=$    -15134 WR=14.4%
+
+  WHAT IF WE FILTERED BY MIN R:R?
+    RR>=0.5: n=2514 WR=15.4% net=$-22,711 avg=$-9.0
+    RR>=1.0: n=2512 WR=15.4% net=$-22,729 avg=$-9.0
+    RR>=1.5: n=2480 WR=15.2% net=$-21,539 avg=$-8.7
+    RR>=2.0: n=2364 WR=14.3% net=$-20,567 avg=$-8.7
+    RR>=3.0: n=2073 WR=12.4% net=$-19,850 avg=$-9.6
+
+================================================================================
+STOP = 0.5 ATR | 1814 trades | net=$-19,783 | file=data\trades_realized_y2024_stop0.5_seltop_5000_kregressor_20260212_094444.csv
+================================================================================
+
+  EXIT REASON BREAKDOWN:
+    stop :  1231 ( 67.9%)  avg=$    -102  total=$   -125059
+    vwap :   572 ( 31.5%)  avg=$     179  total=$    102617
+    eod  :    11 (  0.6%)  avg=$     242  total=$      2658
+
+  P&L SUMMARY:
+    Total gross: $-14,341
+    Total costs: $5,442
+    Total net:   $-19,783
+    Avg net/trade: $-10.91
+    Win rate: 32.1% (583 W / 1231 L)
+    Avg win:  $180.58
+    Avg loss: $-101.59
+    Win/Loss ratio: 1.78
+
+  EV DECOMPOSITION:
+    WR(vwap)=31.5%, avg_win=$179, avg_loss=$102
+    EV/trade = 0.315*179 - 0.685*102 = $-12.99
+    Breakeven WR needed: 36.2%
+    SHORTFALL: actual WR 31.5% vs needed 36.2% = -4.6% gap
+
+  R:R DISTRIBUTION AT ENTRY:
+    Mean:   2.664
+    Median: 2.280
+    RR < 0.25: 0.3%
+    RR < 0.5: 2.5%
+    RR < 1.0: 16.2%
+    RR < 2.0: 42.5%
+    RR < 3.0: 65.9%
+
+  WIN RATE BY R:R BUCKET:
+    RR [0.0,0.5): n=   45 WR= 68.9% avg=$     -4 total=$      -163 vwap%=69%
+    RR [0.5,1.0): n=  249 WR= 60.2% avg=$      2 total=$       545 vwap%=60%
+    RR [1.0,2.0): n=  477 WR= 38.6% avg=$    -10 total=$     -4929 vwap%=38%
+    RR [2.0,3.0): n=  424 WR= 27.1% avg=$    -14 total=$     -6106 vwap%=27%
+    RR [3.0,5.0): n=  408 WR= 17.2% avg=$    -22 total=$     -8852 vwap%=16%
+    RR [5.0,100.0): n=  211 WR= 15.6% avg=$     -1 total=$      -278 vwap%=13%
+
+  VWAP TOUCH BUT NET<=0 (reward < costs): 0 / 572 (0.0%)
+
+  TRADES PER DAY:
+    Mean: 4.4, Median: 4, Max: 14
+
+  TRADE DURATION (bars):
+    Mean: 3.7, Median: 2
+    1-bar: 776 (42.8%)
+
+  DIRECTION:
+    LONG: n=  363 net=$     -1615 WR=39.9%
+    SHORT: n= 1451 net=$    -18168 WR=30.2%
+
+  WHAT IF WE FILTERED BY MIN R:R?
+    RR>=0.5: n=1769 WR=31.2% net=$-19,621 avg=$-11.1
+    RR>=1.0: n=1520 WR=26.4% net=$-20,165 avg=$-13.3
+    RR>=1.5: n=1255 WR=22.7% net=$-19,566 avg=$-15.6
+    RR>=2.0: n=1043 WR=20.9% net=$-15,236 avg=$-14.6
+    RR>=3.0: n= 619 WR=16.6% net=$-9,130 avg=$-14.7
+
+================================================================================
+STOP = 1.0 ATR | 1453 trades | net=$-15,236 | file=data\trades_realized_y2024_stop1.0_seltop_5000_kregressor_20260212_094444.csv
+================================================================================
+
+  EXIT REASON BREAKDOWN:
+    stop :   591 ( 40.7%)  avg=$    -193  total=$   -114080
+    vwap :   846 ( 58.2%)  avg=$     116  total=$     98532
+    eod  :    16 (  1.1%)  avg=$      19  total=$       312
+
+  P&L SUMMARY:
+    Total gross: $-10,877
+    Total costs: $4,359
+    Total net:   $-15,236
+    Avg net/trade: $-10.49
+    Win rate: 57.5% (836 W / 617 L)
+    Avg win:  $118.94
+    Avg loss: $-185.86
+    Win/Loss ratio: 0.64
+
+  EV DECOMPOSITION:
+    WR(vwap)=58.2%, avg_win=$116, avg_loss=$193
+    EV/trade = 0.582*116 - 0.418*193 = $-12.83
+    Breakeven WR needed: 62.4%
+    SHORTFALL: actual WR 58.2% vs needed 62.4% = -4.1% gap
+
+  R:R DISTRIBUTION AT ENTRY:
+    Mean:   0.844
+    Median: 0.646
+    RR < 0.25: 21.0%
+    RR < 0.5: 40.3%
+    RR < 1.0: 67.8%
+    RR < 2.0: 91.5%
+    RR < 3.0: 99.4%
+
+  WIN RATE BY R:R BUCKET:
+    RR [0.0,0.5): n=  586 WR= 76.5% avg=$     -7 total=$     -4057 vwap%=80%
+    RR [0.5,1.0): n=  399 WR= 53.6% avg=$    -17 total=$     -6977 vwap%=53%
+    RR [1.0,2.0): n=  345 WR= 40.6% avg=$     -7 total=$     -2256 vwap%=39%
+    RR [2.0,3.0): n=  114 WR= 28.9% avg=$     -5 total=$      -621 vwap%=26%
+
+  VWAP TOUCH BUT NET<=0 (reward < costs): 20 / 846 (2.4%)
+
+  TRADES PER DAY:
+    Mean: 4.9, Median: 4, Max: 19
+
+  TRADE DURATION (bars):
+    Mean: 4.5, Median: 2
+    1-bar: 511 (35.2%)
+
+  DIRECTION:
+    LONG: n=  459 net=$     -2904 WR=66.0%
+    SHORT: n=  994 net=$    -12332 WR=53.6%
+
+  WHAT IF WE FILTERED BY MIN R:R?
+    RR>=0.5: n= 867 WR=44.8% net=$-11,178 avg=$-12.9
+    RR>=1.0: n= 468 WR=37.2% net=$-4,202 avg=$-9.0
+    RR>=1.5: n= 244 WR=30.3% net=$-4,144 avg=$-17.0
+    RR>=2.0: n= 123 WR=27.6% net=$-1,946 avg=$-15.8
+
+================================================================================
+STOP = 1.5 ATR | 1600 trades | net=$-10,159 | file=data\trades_realized_y2024_stop1.5_seltop_5000_kregressor_20260212_094444.csv
+================================================================================
+
+  EXIT REASON BREAKDOWN:
+    stop :   368 ( 23.0%)  avg=$    -290  total=$   -106687
+    vwap :  1218 ( 76.1%)  avg=$      80  total=$     97242
+    eod  :    14 (  0.9%)  avg=$     -51  total=$      -714
+
+  P&L SUMMARY:
+    Total gross: $-5,359
+    Total costs: $4,800
+    Total net:   $-10,159
+    Avg net/trade: $-6.35
+    Win rate: 73.9% (1182 W / 418 L)
+    Avg win:  $82.66
+    Avg loss: $-258.04
+    Win/Loss ratio: 0.32
+
+  EV DECOMPOSITION:
+    WR(vwap)=76.1%, avg_win=$80, avg_loss=$290
+    EV/trade = 0.761*80 - 0.239*290 = $-8.44
+    Breakeven WR needed: 78.4%
+    SHORTFALL: actual WR 76.1% vs needed 78.4% = -2.3% gap
+
+  R:R DISTRIBUTION AT ENTRY:
+    Mean:   0.345
+    Median: 0.268
+    RR < 0.25: 46.9%
+    RR < 0.5: 78.9%
+    RR < 1.0: 94.5%
+    RR < 2.0: 99.9%
+    RR < 3.0: 100.0%
+
+  WIN RATE BY R:R BUCKET:
+    RR [0.0,0.5): n= 1262 WR= 79.1% avg=$     -6 total=$     -8200 vwap%=82%
+    RR [0.5,1.0): n=  250 WR= 57.6% avg=$     -7 total=$     -1739 vwap%=57%
+    RR [1.0,2.0): n=   87 WR= 46.0% avg=$      0 total=$        20 vwap%=41%
+
+  VWAP TOUCH BUT NET<=0 (reward < costs): 42 / 1218 (3.4%)
+
+  TRADES PER DAY:
+    Mean: 4.2, Median: 3, Max: 18
+
+  TRADE DURATION (bars):
+    Mean: 4.4, Median: 2
+    1-bar: 732 (45.8%)
+
+  DIRECTION:
+    LONG: n=  560 net=$     -3610 WR=76.2%
+    SHORT: n= 1040 net=$     -6549 WR=72.6%
+
+  WHAT IF WE FILTERED BY MIN R:R?
+    RR>=0.5: n= 338 WR=54.4% net=$-1,959 avg=$-5.8
+    RR>=1.0: n=  88 WR=45.5% net=$-220 avg=$-2.5
+
+
+================================================================================
+THEORETICAL BREAKEVEN ANALYSIS
+================================================================================
+  ATR=$0.79 (2024 median), cost/RT=$3, 100 shares
+
+  Stop=0.25 ATR, risk/trade=$20:
+    vwap_dist=0.25: reward_net=$17, loss=$23, BE_WR=57.6%
+    vwap_dist=0.5: reward_net=$36, loss=$23, BE_WR=38.4%
+    vwap_dist=1.0: reward_net=$76, loss=$23, BE_WR=23.0%
+    vwap_dist=1.5: reward_net=$116, loss=$23, BE_WR=16.5%
+    vwap_dist=2.0: reward_net=$155, loss=$23, BE_WR=12.8%
+
+  Stop=0.5 ATR, risk/trade=$40:
+    vwap_dist=0.25: reward_net=$17, loss=$42, BE_WR=71.7%
+    vwap_dist=0.5: reward_net=$36, loss=$42, BE_WR=53.8%
+    vwap_dist=1.0: reward_net=$76, loss=$42, BE_WR=35.9%
+    vwap_dist=1.5: reward_net=$116, loss=$42, BE_WR=26.9%
+    vwap_dist=2.0: reward_net=$155, loss=$42, BE_WR=21.5%
+
+  Stop=1.0 ATR, risk/trade=$79:
+    vwap_dist=0.25: reward_net=$17, loss=$82, BE_WR=83.0%
+    vwap_dist=0.5: reward_net=$36, loss=$82, BE_WR=69.2%
+    vwap_dist=1.0: reward_net=$76, loss=$82, BE_WR=51.9%
+    vwap_dist=1.5: reward_net=$116, loss=$82, BE_WR=41.5%
+    vwap_dist=2.0: reward_net=$155, loss=$82, BE_WR=34.6%
+
+  Stop=1.5 ATR, risk/trade=$118:
+    vwap_dist=0.25: reward_net=$17, loss=$122, BE_WR=87.9%
+    vwap_dist=0.5: reward_net=$36, loss=$122, BE_WR=76.9%
+    vwap_dist=1.0: reward_net=$76, loss=$122, BE_WR=61.5%
+    vwap_dist=1.5: reward_net=$116, loss=$122, BE_WR=51.3%
+    vwap_dist=2.0: reward_net=$155, loss=$122, BE_WR=43.9%
+
+
+================================================================================
+FINAL DIAGNOSIS
+================================================================================
+
+The strategy is negative across ALL configurations because of a fundamental
+asymmetry between reward and risk that the RF model cannot overcome:
+
+1. STOP 0.25 ATR: 84.6% of trades hit stop. WR=15.2%.
+   Avg win=$233, Avg loss=$53. Needs 18.5% WR to break even. Gets 15.2%.
+   GAP: -3.3% WR shortfall. The model can't predict VWAP touch well enough
+   at such a tight stop -- nearly everything gets stopped out.
+
+2. STOP 0.5 ATR: 67.9% stopped. WR=31.5%.
+   Avg win=$179, Avg loss=$102. Needs 36.2% WR. Gets 31.5%.
+   GAP: -4.7% WR shortfall. Closer but still short.
+
+3. STOP 1.0 ATR: 40.7% stopped. WR=58.2%.
+   Avg win=$116, Avg loss=$193. Needs 62.4% WR. Gets 58.2%.
+   GAP: -4.2% WR shortfall. Higher WR but each loss is ~1.7x each win.
+
+4. STOP 1.5 ATR: 23.0% stopped. WR=76.1%.
+   Avg win=$80, Avg loss=$290. Needs 78.4% WR. Gets 76.1%.
+   GAP: -2.3% WR shortfall. Best ratio but wins are tiny vs losses.
+
+ROOT CAUSES:
+A) The base strategy (enter EVERY bar that's away from VWAP) has ~0% edge.
+   The oracle base rates (14.8%-43.5% for stops 0.25-1.5) are EXACTLY the
+   breakeven rates. This is a coin flip disguised as a strategy.
+
+B) The RF model adds essentially NO predictive power. Test WR matches base
+   rates almost exactly. The features (RSI, volume, VWAP slope, etc.) do
+   not meaningfully predict whether price will revert to VWAP.
+
+C) Bar-level overtrading: 4-5 trades/day, many lasting just 1-2 bars.
+   Each trade pays $3 in costs. ~1800 trades * $3 = ~$5,400 in costs alone.
+
+D) The median entry is only 0.4-1.4 ATR from VWAP (depending on stop).
+   With ATR=$0.79, that's $31-$110 reward per 100 shares. The reward is
+   small in absolute terms, making costs significant.
+
+CONCLUSION:
+This is not a model problem -- it's a STRATEGY problem. The VWAP reversion
+setup on TSLA 5min bars does not have a statistical edge. No amount of RF
+tuning, label engineering, or trade selection can fix a strategy that has
+zero base-rate edge. The model would need to predict VWAP touches 3-5%
+better than the base rate, which it demonstrably cannot do.
+
+POSSIBLE PATHS FORWARD:
+1. Add a SETUP FILTER: Only enter on specific conditions (e.g., extreme
+   RSI + high volume + first divergence of the day), not every bar.
+2. Use DYNAMIC VWAP TARGET: Trail the target as VWAP moves, not fixed.
+3. Increase MINIMUM REWARD: Require vwap_dist > 2 ATR before entering.
+4. Reduce TRADE FREQUENCY: Max 1-2 trades per day.
+5. Consider a DIFFERENT STRATEGY entirely on this data.
+
+
+DONE.

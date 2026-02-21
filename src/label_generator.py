@@ -122,13 +122,18 @@ def generate_labels(df: pd.DataFrame, config: Optional[LabelConfig] = None) -> p
     Returns:
         DataFrame with label columns added
     """
+    import sys
+    
     if config is None:
         config = LabelConfig()
     
     result = df.copy()
     
+    print(f"  🏷️  Generating labels for {len(result):,} bars...", file=sys.stderr, flush=True)
+    
     # Ensure we have date column
     if 'date' not in result.columns:
+        print(f"  🏷️  Creating date column from index...", file=sys.stderr, flush=True)
         if hasattr(result.index, 'tz') and result.index.tz is not None:
             result['date'] = result.index.tz_localize(None).date
         elif hasattr(result.index, 'date'):
@@ -140,11 +145,13 @@ def generate_labels(df: pd.DataFrame, config: Optional[LabelConfig] = None) -> p
     result = result.replace([np.inf, -np.inf], np.nan)
     
     # Generate labels for each stop width
-    print(f"Generating labels for {len(config.stop_atrs)} stop widths...")
-    for stop_atr in config.stop_atrs:
+    print(f"  🏷️  Computing labels for {len(config.stop_atrs)} stop widths: {config.stop_atrs}", file=sys.stderr, flush=True)
+    for i, stop_atr in enumerate(config.stop_atrs, 1):
         stop_col = f"label_s{stop_atr}".replace(".", "_")
-        print(f"  Computing labels for stop={stop_atr} ATR...")
+        print(f"  🏷️  [{i}/{len(config.stop_atrs)}] Computing labels for stop={stop_atr} ATR...", file=sys.stderr, flush=True)
         result[stop_col] = compute_trade_outcome_vectorized(result, stop_atr)
+    
+    print(f"  ✅ Labels generated! Added {len(config.stop_atrs)} label columns", file=sys.stderr, flush=True)
     
     return result
 

@@ -431,16 +431,23 @@ def calc_all_indicators(df: pd.DataFrame, config: Optional[IndicatorConfig] = No
     Returns:
         DataFrame with all original columns plus indicator columns
     """
+    import sys
+    
     if config is None:
         config = IndicatorConfig()
     
     result = df.copy()
+    total_bars = len(df)
     
     # Core indicators
+    print(f"  📊 Calculating ATR ({config.atr_period} period) on {total_bars:,} bars...", file=sys.stderr, flush=True)
     result['atr'] = calc_atr(df, config.atr_period)
+    
+    print(f"  📊 Calculating RSI ({config.rsi_period} period)...", file=sys.stderr, flush=True)
     result['rsi'] = calc_rsi(df, config.rsi_period)
     
     # Bollinger Bands
+    print(f"  📊 Calculating Bollinger Bands ({config.bb_period} period, {config.bb_std} std)...", file=sys.stderr, flush=True)
     bb = calc_bollinger_bands(df, config.bb_period, config.bb_std)
     result['bb_upper'] = bb['bb_upper']
     result['bb_middle'] = bb['bb_middle']
@@ -448,21 +455,26 @@ def calc_all_indicators(df: pd.DataFrame, config: Optional[IndicatorConfig] = No
     result['bb_pct'] = bb['bb_pct']
     
     # VWAP-related
+    print(f"  📊 Calculating VWAP...", file=sys.stderr, flush=True)
     result['vwap'] = calc_vwap(df)
     result['vwap_dist_pct'] = calc_vwap_distance(df, result['vwap'])
     result['price_below_vwap'] = calc_price_vs_vwap(df, result['vwap'])
     
     # Slopes
+    print(f"  📊 Calculating slopes (VWAP, RSI)...", file=sys.stderr, flush=True)
     result['vwap_slope'] = calc_slope(result['vwap'], config.vwap_slope_period)
     result['rsi_slope'] = calc_slope(result['rsi'], config.rsi_slope_period)
     
     # Volume
+    print(f"  📊 Calculating relative volume ({config.rel_vol_period} period)...", file=sys.stderr, flush=True)
     result['rel_vol'] = calc_relative_volume(df, config.rel_vol_period)
     
     # ATR-normalized metrics
+    print(f"  📊 Calculating ATR-normalized metrics...", file=sys.stderr, flush=True)
     result['atr_move'] = calc_atr_normalized_move(df, result['atr'])
     result['bar_range_atr'] = calc_bar_range_atr(df, result['atr'])
-      # Distance to Bollinger Bands in ATR units
+    
+    # Distance to Bollinger Bands in ATR units
     result['dist_to_bb_lower'] = (df['close'] - result['bb_lower']) / result['atr']
     result['dist_to_bb_upper'] = (result['bb_upper'] - df['close']) / result['atr']
     
@@ -470,8 +482,11 @@ def calc_all_indicators(df: pd.DataFrame, config: Optional[IndicatorConfig] = No
     result['vwap_dist_atr'] = (df['close'] - result['vwap']) / result['atr']
     
     # Add reversal context features for ML
+    print(f"  📊 Calculating reversal context features...", file=sys.stderr, flush=True)
     result = calc_reversal_context(result)
-      return result
+    
+    print(f"  ✅ All indicators calculated! Result has {len(result.columns)} columns", file=sys.stderr, flush=True)
+    return result
 
 
 def identify_reversal_setups(df: pd.DataFrame,

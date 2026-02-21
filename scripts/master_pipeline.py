@@ -199,10 +199,13 @@ RF_THRESHOLDS = [0.5, 0.55, 0.6, 0.65]
 # they are not labeled 0, they simply don't exist in the dataset.
 
 SETUP_DEFAULTS = {
-    'min_dist_atr': 0.5,      # Minimum distance from VWAP in ATR units
+    'min_rr': 0.3,             # Minimum reward:risk ratio (vwap_width_atr / stop_atr).
+                               # Used BOTH as a pre-training filter AND post-prediction gate.
+                               # 0.3 = soft floor excluding degenerate setups (target < 30% of stop).
+                               # The model still sees a wide range of RR values and learns
+                               # its own optimal threshold via the nn_pnl loss.
     'min_minutes_session': 15, # Minimum minutes into session (VWAP needs to stabilize)
     'max_minutes_session': 360,# Maximum minutes into session (need time for reversion)
-    'min_rr_setup': 1.0,      # Minimum R:R (vwap_width_atr / stop_atr) for the trade to qualify
 }
 
 # ============================================================================
@@ -370,30 +373,28 @@ def _train_nn_pnl(
 def apply_setup_filter(
     df: pd.DataFrame,
     stop_atr: float,
-    min_dist_atr: float = 0.5,
-    min_minutes_session: int = 15,
-    max_minutes_session: int = 360,
-    min_rr_setup: float = 1.0,
+    min_rr: float = SETUP_DEFAULTS['min_rr'],
+    min_minutes_session: int = SETUP_DEFAULTS['min_minutes_session'],
+    max_minutes_session: int = SETUP_DEFAULTS['max_minutes_session'],
 ) -> pd.Series:
     """Return a boolean mask identifying bars that qualify as proper reversion setups.
 
     A "setup" requires ALL of the following:
-      1. Price is meaningfully extended from VWAP (vwap_width_atr >= min_dist_atr).
+      1. Per-trade R:R is attractive (vwap_width_atr / stop_atr >= min_rr).
+         This implicitly enforces a minimum distance from VWAP since
+         min_dist = min_rr * stop_atr (e.g. 0.3 * 0.75 = 0.225 ATR).
       2. Session has been open long enough for VWAP to stabilize
          (minutes_into_session >= min_minutes_session).
       3. Enough session time remains for reversion to play out
          (minutes_into_session <= max_minutes_session).
-      4. Per-trade R:R is attractive (vwap_width_atr / stop_atr >= min_rr_setup).
 
     Bars that fail ANY criterion are excluded from training and evaluation.
-    This focuses the RF on bars where a discretionary trader would actually
-    consider entering a VWAP reversion trade.
     """
     mask = pd.Series(True, index=df.index)
 
-    # 1. Minimum distance from VWAP
-    if 'vwap_width_atr' in df.columns and min_dist_atr > 0:
-        mask &= df['vwap_width_atr'] >= min_dist_atr
+    # 1. Minimum R:R for THIS stop level (also enforces min distance from VWAP)
+    if 'vwap_width_atr' in df.columns and min_rr > 0 and stop_atr > 0:
+        mask &= (df['vwap_width_atr'] / stop_atr) >= min_rr
 
     # 2. VWAP stabilisation — skip first N minutes of session
     if 'minutes_into_session' in df.columns and min_minutes_session > 0:
@@ -402,10 +403,6 @@ def apply_setup_filter(
     # 3. Enough time remaining for reversion
     if 'minutes_into_session' in df.columns and max_minutes_session < 390:
         mask &= df['minutes_into_session'] <= max_minutes_session
-
-    # 4. Minimum R:R for THIS stop level
-    if 'vwap_width_atr' in df.columns and min_rr_setup > 0 and stop_atr > 0:
-        mask &= (df['vwap_width_atr'] / stop_atr) >= min_rr_setup
 
     return mask
 
@@ -490,7 +487,10 @@ def calculate_core_indicators(df, verbose: bool = True):
         print("Calculating VWAP distance metrics...")
     df['vwap_width_atr'] = abs(df['close'] - df['vwap']) / df['atr']
     df['price_to_vwap_atr'] = (df['close'] - df['vwap']) / df['atr']  # Signed
-    df['is_long_setup'] = df['close'] < df['vwap']
+    df['is_long_setup'] = df['close'] < df['vwap']    # Explicit RR feature for the model to learn from (uses 0.75 ATR reference stop)
+    # This allows the model to develop its own internal 'min_rr' threshold.
+    # 0.75 matches the default live stop width (STOP_ATRS midpoint).
+    df['setup_rr'] = df['vwap_width_atr'] / 0.75
 
     # Z-score of VWAP stretch: how unusual is the current distance vs recent history
     # Uses rolling 60-bar (5 hours) window of absolute VWAP distance in ATR units
@@ -1095,8 +1095,14 @@ def calculate_core_indicators(df, verbose: bool = True):
 
 
 def get_feature_columns(df):
-    """Get non-redundant feature columns for RF."""
+    """Get non-redundant feature columns for RF/NN.
+
+    Includes ALL original baseline features PLUS the 16 reversal/overextension
+    features that were previously excluded.  Only raw-price helpers, metadata,
+    leakage columns, and S/R sub-components are excluded.
+    """
     exclude = [
+        # --- metadata / raw prices (never features) ---
         'datetime', 'date', 'time', 'year', 'open', 'high', 'low', 'close', 'volume',
         'vwap', 'atr',
         'avg_rr', 'min_rr', 'max_rr',  # Exclude aggregate R:R features (data leakage)
@@ -1111,35 +1117,24 @@ def get_feature_columns(df):
         # S/R raw price helpers (use ATR-normalised distance features)
         'or_high', 'or_low',  # opening range raw prices
         'poc', 'vah', 'val',  # volume profile raw prices
-        # ----- Reversal features excluded from default set (available for --extra-features) -----
-        # Adding these to the 33-feature baseline HURTS performance (curse of dimensionality):
-        # The RF spreads its splitting budget over more features, diluting the signal from the
-        # core features (vwap_slope, vol_pct_complete, etc.) without adding enough predictive lift.
-        # All 31 new features are computed and stored in the DataFrame for future experimentation,
-        # but excluded from the default feature set used by get_feature_columns().
-        'bb_z_score', 'bb_width_atr',           # Bollinger Band context
-        'vwap_sigma',                            # VWAP standard deviation bands
-        'upper_wick_pct', 'lower_wick_pct', 'body_pct', 'rejection_wick_pct',  # Wicking
-        'vol_zscore', 'vol_climax', 'vol_declining_3bar',  # Volume climax
-        'atr_ratio_5', 'atr_ratio_20', 'atr_regime',      # ATR regime
-        'ema60_slope_atr', 'price_vs_ema60_atr', 'htf_trend_aligned',  # Higher-TF trend
-        'stoch_k', 'stoch_d', 'stoch_reversal_signal',    # Stochastic
-        'reversion_velocity_1', 'reversion_velocity_3',    # Reversion velocity
-        'pct_of_max_extension',                  # Max excursion
-        'extension_accel', 'extension_decelerating',       # Extension deceleration
-        'gap_atr', 'prior_day_range_atr', 'prior_close_vs_prior_vwap_atr',  # Prior day
-        'vwap_slope_atr', 'vwap_stability',      # VWAP anchoring
-        'consec_reverting',                       # Consecutive reverting bars
-        'wap_vs_close_atr',                       # Spread proxy
         # S/R sub-components (keep composites, exclude granular)
         'strong_rejection_wick',                 # sub-component of sr_rejection_score
         'swept_pdh', 'swept_pdl',               # sub-components of swept_key_level
         'broke_swing_high', 'broke_swing_low',   # sub-components of sr_rejection_score
         'vwap_band_reclaim', 'engulfing_toward_vwap',  # sub-components of sr_trigger_score
+        # Bollinger (redundant with vwap_sigma)
+        'bb_z_score', 'bb_width_atr',
+        # Raw wick components (keep rejection_wick_pct)
+        'upper_wick_pct', 'lower_wick_pct', 'body_pct',
+        # Volume climax sub-components (noisy)
+        'vol_zscore', 'vol_climax', 'vol_declining_3bar',
+        # Noisy / marginal
+        'consec_reverting',
+        'wap_vs_close_atr',
     ]
-    
-    exclude_prefixes = ['label_', 'rr_']  # Exclude all R:R columns
-    
+
+    exclude_prefixes = ['label_', 'rr_']  # Exclude all label & per-stop R:R columns
+
     features = []
     for col in df.columns:
         if col in exclude:
@@ -1148,7 +1143,7 @@ def get_feature_columns(df):
             continue
         if df[col].dtype in ['float64', 'int64', 'float32', 'int32', 'bool']:
             features.append(col)
-    
+
     return features
 
 
@@ -1185,13 +1180,11 @@ def train_rf_model(
     slippage_per_share=SLIPPAGE_PER_SHARE,
     min_net_r: float = 0.0,
     model_kind: str = 'classifier',
-    regression_target: str = 'net_r',
-    max_realized_target_samples: int = 20000,
-    setup_filter: bool = False,
-    min_dist_atr: float = 0.5,
-    min_minutes_session: int = 15,
-    max_minutes_session: int = 360,
-    min_rr_setup: float = 1.0,
+    regression_target: str = 'net_r',    max_realized_target_samples: int = 20000,
+    setup_filter: bool = True,
+    min_rr: float = SETUP_DEFAULTS['min_rr'],
+    min_minutes_session: int = SETUP_DEFAULTS['min_minutes_session'],
+    max_minutes_session: int = SETUP_DEFAULTS['max_minutes_session'],
     calibrate: bool = False,
 ):
     """Train RF model for a single stop width.
@@ -1224,25 +1217,22 @@ def train_rf_model(
 
     # Filter valid labels
     valid = df[label_col].notna()
-    df_valid = df[valid].copy()
-
-    # --- SETUP FILTER: only keep bars that qualify as proper reversion setups ---
+    df_valid = df[valid].copy()    # --- SETUP FILTER: only keep bars that qualify as proper reversion setups ---
     n_before_setup = len(df_valid)
     if setup_filter:
         setup_mask = apply_setup_filter(
             df_valid,
             stop_atr=stop_atr,
-            min_dist_atr=min_dist_atr,
+            min_rr=min_rr,
             min_minutes_session=min_minutes_session,
             max_minutes_session=max_minutes_session,
-            min_rr_setup=min_rr_setup,
         )
         df_valid = df_valid[setup_mask].copy()
         n_after_setup = len(df_valid)
         pct_kept = n_after_setup / max(1, n_before_setup) * 100
         print(f"  [SETUP] {n_before_setup:,} -> {n_after_setup:,} bars ({pct_kept:.1f}% kept)"
-              f" | min_dist={min_dist_atr} min_mins={min_minutes_session}"
-              f" max_mins={max_minutes_session} min_rr={min_rr_setup}")
+              f" | min_rr={min_rr} min_mins={min_minutes_session}"
+              f" max_mins={max_minutes_session}")
     else:
         n_after_setup = n_before_setup
 
@@ -2507,17 +2497,17 @@ def main():
     parser.add_argument(
         "--wf-threshold",
         type=float,
-        default=0.5,
-        help="Walk-forward: RF probability threshold (default: 0.5).",
+        default=0.5,        help="Walk-forward: RF probability threshold (default: 0.5).",
     )
     parser.add_argument(
         "--min-rr",
         type=float,
-        default=0.0,
+        default=SETUP_DEFAULTS['min_rr'],
         help=(
-            "Minimum per-trade R:R (vwap_width_atr / stop_atr) to accept a signal. "
-            "Trades below this ratio are rejected even if RF proba >= threshold. "
-            "E.g. --min-rr 0.75 filters out trades whose reward < 75%% of risk. (default: 0.0 = no filter)"
+            "Unified minimum R:R floor (vwap_width_atr / stop_atr). "
+            "Used BOTH as a setup filter (bars below this are dropped from training) "
+            "AND as a post-prediction gate (signals below this are rejected at inference). "
+            f"Default: {SETUP_DEFAULTS['min_rr']}."
         ),
     )
     parser.add_argument(
@@ -2710,25 +2700,16 @@ def main():
             "mode can assign larger positions to genuinely high-confidence trades. "
             "Only applies to --model-kind classifier (RF). Ignored for other model kinds."
         ),
-    )
-
-    # ---- Setup filter arguments ----
+    )    # ---- Setup filter arguments ----
     parser.add_argument(
         "--setup-filter",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=True,
         help=(
-            "Enable setup filter: only train/evaluate on bars that qualify as "
+            "Setup filter: only train/evaluate on bars that qualify as "
             "proper VWAP reversion setups (meaningful extension, VWAP stabilised, "
-            "enough session time, minimum R:R).  Non-setup bars are dropped entirely."
-        ),
-    )
-    parser.add_argument(
-        "--min-dist-atr",
-        type=float,
-        default=SETUP_DEFAULTS['min_dist_atr'],
-        help=(
-            "Setup filter: minimum distance from VWAP in ATR units. "
-            f"Default: {SETUP_DEFAULTS['min_dist_atr']}"
+            "enough session time, minimum R:R).  Non-setup bars are dropped entirely. "
+            "ON by default.  Use --no-setup-filter to disable."
         ),
     )
     parser.add_argument(
@@ -2747,18 +2728,7 @@ def main():
         help=(
             "Setup filter: maximum minutes into session (need time for reversion to play out). "
             f"Default: {SETUP_DEFAULTS['max_minutes_session']}"
-        ),
-    )
-    parser.add_argument(
-        "--min-rr-setup",
-        type=float,
-        default=SETUP_DEFAULTS['min_rr_setup'],
-        help=(
-            "Setup filter: minimum per-trade R:R (vwap_width_atr / stop_atr) for a bar "
-            "to qualify as a setup. Bars below this are not trained on at all. "
-            f"Default: {SETUP_DEFAULTS['min_rr_setup']}"
-        ),
-    )
+        ),    )
     parser.add_argument(
         "--train-years",
         type=str,
@@ -2858,8 +2828,8 @@ def main():
         print(f"  [FILTER] Min R:R = {args.min_rr:.2f} (reject trades with vwap_dist/stop < {args.min_rr:.2f})")
     print(f"  Slippage: ${args.slippage:.3f}/share | Win def: {args.win_definition} | P&L def: {args.pnl_definition}")
     if args.setup_filter:
-        print(f"  [SETUP FILTER] min_dist={args.min_dist_atr} ATR | min_mins={args.min_minutes_session}"
-              f" | max_mins={args.max_minutes_session} | min_rr_setup={args.min_rr_setup}")
+        print(f"  [SETUP FILTER] min_rr={args.min_rr} | min_mins={args.min_minutes_session}"
+              f" | max_mins={args.max_minutes_session}")
     if progress_csv is not None:
         print(f"  [STREAM] Writing incremental results to: {progress_csv}")
     if args.indicators_file:
@@ -2881,7 +2851,10 @@ def main():
             df["date"] = pd.to_datetime(df["date"]).dt.date
         # Add 'time' column if missing (some downstream code expects it)
         if "time" not in df.columns and "datetime" in df.columns:
-            df["time"] = df["datetime"].dt.strftime("%Y-%m-%d %H:%M:%S%z")
+            df["time"] = df["datetime"].dt.strftime("%Y-%m-%d %H:%M:%S%z")        # Backfill any features added after the parquet was generated
+        if 'setup_rr' not in df.columns and 'vwap_width_atr' in df.columns:
+            df['setup_rr'] = df['vwap_width_atr'] / 0.75
+            print(f"[OK] Computed setup_rr on the fly (missing from parquet)")
         print(f"[OK] Loaded {len(df):,} bars with {len(df.columns)} columns from {ind_path.name}")
         print(f"[OK] Date range: {df['datetime'].min()} to {df['datetime'].max()}")
     else:
@@ -2920,7 +2893,6 @@ def main():
 
     for stop_atr in STOP_ATRS:
         print(f"\n--- Stop Width: {stop_atr} ATR ---")
-
         result = train_rf_model(
             df,
             stop_atr,
@@ -2937,10 +2909,9 @@ def main():
             regression_target=args.regression_target,
             max_realized_target_samples=int(args.max_realized_target_samples),
             setup_filter=args.setup_filter,
-            min_dist_atr=args.min_dist_atr,
+            min_rr=args.min_rr,
             min_minutes_session=args.min_minutes_session,
             max_minutes_session=args.max_minutes_session,
-            min_rr_setup=args.min_rr_setup,
             calibrate=args.calibrate,
         )
 
@@ -3372,7 +3343,8 @@ def main():
         f.write(f"- Label mode: {args.label_mode}\n")
         if args.label_mode == 'net_positive_r':
             f.write(f"- min_net_r: {args.min_net_r}\n")
-        f.write(f"- min_rr (post-filter): {args.min_rr}\n")
+        f.write(f"- min_rr: {args.min_rr}\n")
+        f.write(f"- setup_filter: {args.setup_filter}\n")
         f.write(f"- Slippage: {args.slippage}\n\n")
 
         if recommended_stop is not None:
@@ -3540,6 +3512,19 @@ def main():
                 auc_te_val = float('nan')
                 if pred_train is not None and y_train_raw is not None and len(pred_train) > 0:
                     y_tr_arr2 = np.asarray(y_train_raw)
+                    if args.select_mode == 'prob_weighted':
+                        prob_thr = args.prob_threshold
+                        sel_mask_tr2 = pred_train >= prob_thr
+                        if sel_mask_tr2.sum() > 0:
+                            rf_wr_train = float(y_tr_arr2[sel_mask_tr2].mean())
+                            rf_n_train = int(sel_mask_tr2.sum())
+                    else:
+                        top_n_val = int(args.top_n)
+                        order_tr2 = np.argsort(pred_train)[::-1]
+                        n_sel_tr2 = min(top_n_val, len(order_tr2))
+                        top_idx_tr2 = order_tr2[:n_sel_tr2]
+                        rf_wr_train = float(y_tr_arr2[top_idx_tr2].mean())
+                        rf_n_train = n_sel_tr2
                     y_pred_tr2 = (pred_train >= 0.5).astype(int)
                     try:
                         f1_tr_val = f1_score(y_tr_arr2, y_pred_tr2)
@@ -3589,7 +3574,8 @@ def main():
         for r in all_results:
             yp = r.get('yearly_pnl', {})
             if yp:
-                for yr in sorted(yp.keys()):                    yearly_rows_all.append({
+                for yr in sorted(yp.keys()):
+                    yearly_rows_all.append({
                         'stop_atr': r['stop_atr'],
                         'selection': r.get('selection', ''),
                         'year': yr,

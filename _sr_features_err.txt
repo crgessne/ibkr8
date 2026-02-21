@@ -1,0 +1,40 @@
+  \U0001f3f7\ufe0f  Generating labels for 197,419 bars...
+  \U0001f3f7\ufe0f  Computing labels for 9 stop widths: [0.25, 0.35, 0.4, 0.5, 0.6, 0.75, 1.0, 1.25, 1.5]
+  \U0001f3f7\ufe0f  [1/9] Computing labels for stop=0.25 ATR...
+  \U0001f3f7\ufe0f  [2/9] Computing labels for stop=0.35 ATR...
+  \U0001f3f7\ufe0f  [3/9] Computing labels for stop=0.4 ATR...
+  \U0001f3f7\ufe0f  [4/9] Computing labels for stop=0.5 ATR...
+  \U0001f3f7\ufe0f  [5/9] Computing labels for stop=0.6 ATR...
+  \U0001f3f7\ufe0f  [6/9] Computing labels for stop=0.75 ATR...
+  \U0001f3f7\ufe0f  [7/9] Computing labels for stop=1.0 ATR...
+  \U0001f3f7\ufe0f  [8/9] Computing labels for stop=1.25 ATR...
+  \U0001f3f7\ufe0f  [9/9] Computing labels for stop=1.5 ATR...
+  \u2705 Labels generated! Added 9 label columns
+Traceback (most recent call last):
+  File "C:\Users\Administrator\ibkr8\scripts\master_pipeline.py", line 2736, in <module>
+    results = main()
+  File "C:\Users\Administrator\ibkr8\scripts\master_pipeline.py", line 2194, in main
+    pnl_metrics = simulate_trade_level_pnl(
+        df_full=df,
+    ...<9 lines>...
+        shares_array=masked_shares,
+    )
+  File "C:\Users\Administrator\ibkr8\scripts\master_pipeline.py", line 1532, in simulate_trade_level_pnl
+    t = _simulate_trade_realized_path(
+        df_full=df_full,
+    ...<3 lines>...
+        slippage_per_share=float(slippage_per_share),
+    )
+  File "C:\Users\Administrator\ibkr8\scripts\master_pipeline.py", line 1429, in _simulate_trade_realized_path
+    'exit_datetime': pd.to_datetime(df_full.loc[exit_bar_index, 'datetime']),
+                                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\indexing.py", line 1194, in __getitem__
+    check_dict_or_set_indexers(key)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\indexing.py", line 2785, in check_dict_or_set_indexers
+    isinstance(key, tuple) and any(isinstance(x, set) for x in key)
+                               ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\ibkr8\.venv\Lib\site-packages\pandas\core\indexing.py", line 2785, in <genexpr>
+    isinstance(key, tuple) and any(isinstance(x, set) for x in key)
+    
+KeyboardInterrupt
